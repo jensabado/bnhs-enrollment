@@ -1,0 +1,39 @@
+
+.scrollbar-sidebar li{
+    color: #274c43 !important;
+}
+
+.scrollbar-sidebar a:hover{
+    background-color:  #407c6d !important;
+    color: rgb(255, 255, 255) !important;
+}
+
+a.mm-active{
+    background-color: #274c43!important;
+    color: rgb(255, 255, 255) !important;
+}
+
+.widget-heading{
+    color: #274c43 !important;
+}
+
+.widget-numbers{
+    color: #274c43 !important;
+}
+
+.widget-subheading{
+    color:  #407c6d !important;
+}
+
+.badge{
+    background-color: #274c43!important;
+}
+
+.btn-icon{
+    background-color: #274c43!important;
+    border-color:  #274c43!important;
+
+}
+.search-wrapper{
+    text-align: right;
+}

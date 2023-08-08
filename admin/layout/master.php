@@ -105,6 +105,8 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
                                 <span>Building</span></a></li>
                         <li><a class="nav-link" href="room.php"><i class="fas fa-solid fa-house"></i>
                                 <span>Room</span></a></li>
+                        <li><a class="nav-link" href="section.php"><i class="fas fa-solid fa-house-circle-check"></i>
+                                <span>Section</span></a></li>
                         <li class="dropdown">
                             <a href="#" class="nav-link has-dropdown"><i class="fas fa-th"></i>
                                 <span>Bootstrap</span></a>

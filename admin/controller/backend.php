@@ -232,3 +232,121 @@ if(isset($_POST['delete_room'])) {
     // Close the prepared statement
     mysqli_stmt_close($deleteStmt);
 }
+
+// section.php
+if(isset($_POST['get_room'])) {
+    $building_id = $_POST['building_id'];
+
+    $stmt = $conn->prepare("SELECT id, room FROM tbl_room WHERE building_id = ? AND is_deleted = 'no'");
+    $stmt->bind_param("i", $building_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if($result->num_rows != 0) {
+        echo '<option value="">SELECT ROOM</option>';
+
+        while($row = $result->fetch_assoc()) {
+            echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars(ucwords($row['room'])) . '</option>';
+        }
+    }
+
+    $stmt->close();
+}
+
+if(isset($_POST['add_section'])) {
+    $building_id = $_POST['add_section_building_id'];
+    $room_id = $_POST['add_section_room_id'];
+    $name = $_POST['add_section_name'];
+
+    $stmt = $conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND room_id = ? AND section = ?");
+    $stmt->bind_param("iis", $building_id, $room_id, $name);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if($result->num_rows > 0) {
+        echo 'already exist';
+    } else {
+        $stmt->close();
+
+        $stmt = $conn->prepare("INSERT INTO tbl_section (building_id, room_id, section) VALUES (?, ?, ?)");
+        $stmt->bind_param("iis", $building_id, $room_id, $name);
+        $insert = $stmt->execute();
+
+        if($insert) {
+            echo 'success';
+        }
+    }
+
+    $stmt->close();
+}
+
+if(isset($_POST['get_section_info'])) {
+    $id = $_POST['section_id'];
+
+    $getSectionInfoStmt = mysqli_prepare($conn, "SELECT id, building_id, room_id, section FROM tbl_section WHERE id = ?");
+    
+    mysqli_stmt_bind_param($getSectionInfoStmt, "i", $id);
+    
+    mysqli_stmt_execute($getSectionInfoStmt);
+
+    $getRoomInfoResult = mysqli_stmt_get_result($getSectionInfoStmt);
+
+    $row = mysqli_fetch_assoc($getRoomInfoResult);
+
+    if($row) {
+        $result = array(
+            'id' => $row['id'],
+            'building_id' => $row['building_id'],
+            'room_id' => $row['room_id'],
+            'section' => $row['section']
+        );
+        
+        echo json_encode($result);
+    } else {
+        echo 'Room not found';
+    }
+    
+    mysqli_stmt_close($getSectionInfoStmt);
+}
+
+if(isset($_POST['edit_section'])) {
+    $id = $_POST['edit_section_id'];
+    $building_id = $_POST['edit_section_building_id'];
+    $room_id = $_POST['edit_section_room_id'];
+    $name = $_POST['edit_section_name'];
+
+    $stmt = $conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND room_id = ? AND section = ? AND id != ? AND is_deleted = 'no'");
+    $stmt->bind_param("iisi", $building_id, $room_id, $name, $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if($result->num_rows > 0) {
+        echo 'already exist';
+    } else {
+        $stmt->close();
+
+        $stmt = $conn->prepare("UPDATE tbl_section SET building_id = ?, room_id = ?, section = ? WHERE id = ?");
+        $stmt->bind_param("iisi", $building_id, $room_id, $name, $id);
+        $update = $stmt->execute();
+
+        if($update) {
+            echo 'success';
+        }
+    }
+
+    $stmt->close();
+}
+
+if(isset($_POST['delete_section'])) {
+    $id = $_POST['id'];
+
+    $stmt = $conn->prepare("UPDATE tbl_section SET is_deleted = 'yes' WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $delete = $stmt->execute();
+
+    if($delete) {
+        echo 'success';
+    }
+
+    $stmt->close();
+}

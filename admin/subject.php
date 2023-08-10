@@ -1,48 +1,59 @@
 <?php
 require_once('../database/connection.php');
-$page_title = 'Room';
+$page_title = 'Subject';
+
 ob_start();
 
 ?>
+
+<!-- Modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id="add_modal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Room</h5>
+                <h5 class="modal-title">Add Subject</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" id="add_room_form">
+                <form action="" id="add_subject_form">
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label for="">Select Building</label>
-                            <select class="form-control" name="add_building_id" id="add_building_id">
-                                <option disabled value="" selected>SELECT</option>';
+                            <label for="">Grade Level</label>
+                            <select class="form-control" name="add_grade_level" id="add_grade_level" required>
+                                <option value="" disabled selected>SELECT GRADE LEVEL</option>
                                 <?php
-                                $get_building = mysqli_query($conn, "SELECT * FROM tbl_building WHERE is_deleted = 'no'");
-                                foreach ($get_building as $row) {
-                                    $id = htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8');
-                                    $building = htmlspecialchars($row['building'], ENT_QUOTES, 'UTF-8');
-                                    echo '<option value="' . $id . '">' . ucwords($building) . '</option>';
+                                $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level WHERE is_deleted = ?");
+                                $isDeleted = 'no';
+                                $stmt->bind_param("s", $isDeleted);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                
+                                while ($fetch_grade_level = $result->fetch_assoc()) {
+                                    $id = $fetch_grade_level['id'];
+                                    $grade_level = ucwords($fetch_grade_level['grade']);
+                                
+                                    echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($grade_level) . '</option>';
                                 }
+                                
+                                $stmt->close();                    
                                 ?>
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <label for="">Room Name</label>
-                            <input class="form-control" type="text" name="add_room_name" id="add_room_name"
-                                placeholder="Enter building name" required>
+                            <label for="">Subject</label>
+                            <input class="form-control" type="text" name="add_subject_name" id="add_subject_name"
+                                placeholder="Enter Subject Name" required>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer bg-whitesmoke br">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="add_room_form" id="add_room_btn">Add</button>
+                <button type="submit" class="btn btn-primary" form="add_subject_form" id="add_subject_btn">Add</button>
                 <a href="#" class="btn disabled btn-primary btn-progress d-none spinner">Progress</a>
             </div>
         </div>
@@ -53,55 +64,56 @@ ob_start();
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Building</h5>
+                <h5 class="modal-title">Edit Subject</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" id="edit_room_form">
+                <form action="" id="edit_subject_form">
                     <div class="row mb-3 d-none">
                         <div class="col-12">
-                            <label for="">Room ID</label>
-                            <input class="form-control" type="text" name="edit_room_id" id="edit_room_id"
-                                placeholder="Enter room id" required>
+                            <label for="">Subject ID</label>
+                            <input class="form-control" type="text" name="edit_subject_id" id="edit_subject_id"
+                                placeholder="Enter subject id" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label for="">Building Name</label>
-                            <select class="form-control" name="edit_building_id" id="edit_building_id" required>
-                                <option disabled value="" selected>SELECT</option>
+                            <label for="">Grade Level</label>
+                            <select class="form-control" name="edit_grade_level" id="edit_grade_level" required>
+                                <option value="" disabled selected>SELECT GRADE LEVEL</option>
                                 <?php
-                                $stmt = $conn->prepare("SELECT id, building FROM tbl_building WHERE is_deleted = ?");
+                                $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level WHERE is_deleted = ?");
                                 $isDeleted = 'no';
                                 $stmt->bind_param("s", $isDeleted);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
                                 
-                                while ($row = $result->fetch_assoc()) {
-                                    $id = htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8');
-                                    $building = htmlspecialchars($row['building'], ENT_QUOTES, 'UTF-8');
-                                    echo '<option value="' . $id . '">' . ucwords($building) . '</option>';
+                                while ($fetch_grade_level = $result->fetch_assoc()) {
+                                    $id = $fetch_grade_level['id'];
+                                    $grade_level = ucwords($fetch_grade_level['grade']);
+                                
+                                    echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($grade_level) . '</option>';
                                 }
                                 
-                                $stmt->close();
+                                $stmt->close();                    
                                 ?>
                             </select>
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row">
                         <div class="col-12">
-                            <label for="">Room Name</label>
-                            <input class="form-control" type="text" name="edit_room_name" id="edit_room_name"
-                                placeholder="Enter room name" required>
+                            <label for="">Subject</label>
+                            <input class="form-control" type="text" name="edit_subject_name" id="edit_subject_name"
+                                placeholder="Enter Subject" required>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer bg-whitesmoke br">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="edit_room_form" id="edit_room_btn">Save
+                <button type="submit" class="btn btn-primary" form="edit_subject_form" id="edit_subject_btn">Save
                     changes</button>
                 <a href="#" class="btn disabled btn-primary btn-progress d-none spinner">Progress</a>
             </div>
@@ -111,33 +123,32 @@ ob_start();
 
 <section class="section">
     <div class="section-header">
-        <h1>Room</h1>
+        <h1>Subject</h1>
     </div>
 
     <div class="section-body">
         <div class="card">
             <div class="card-header">
                 <button class="btn btn-primary" id="add_building"><i class="fa-solid fa-plus pr-1"></i> ADD
-                    ROOM</button>
+                    SUBJECT</button>
             </div>
             <div class="card-body">
                 <div class="row align-items-center justify-content-center">
                     <div class="col-sm-3">
-                        <select class="form-control mb-3" name="filter_building"
-                            id="filter_building">
-                            <option selected value="">SELECT BUILDING</option>
+                        <select class="form-control mb-3" name="filter_grade_level" id="filter_grade_level">
+                            <option selected value="">SELECT GRADE LEVEL</option>
                             <?php
-                            $stmt = $conn->prepare("SELECT id, building FROM tbl_building WHERE is_deleted = ?");
+                            $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level WHERE is_deleted = ?");
                             $isDeleted = 'no';
                             $stmt->bind_param("s", $isDeleted);
                             $stmt->execute();
                             $result = $stmt->get_result();
                             
-                            while ($fetch_building = $result->fetch_assoc()) {
-                                $id = $fetch_building['id'];
-                                $building_name = ucwords($fetch_building['building']);
+                            while ($fetch_grade_level = $result->fetch_assoc()) {
+                                $id = $fetch_grade_level['id'];
+                                $grade_level = ucwords($fetch_grade_level['grade']);
                             
-                                echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($building_name) . '</option>';
+                                echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($grade_level) . '</option>';
                             }
                             
                             $stmt->close();                    
@@ -153,8 +164,8 @@ ob_start();
                         <thead class="thead-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Building Name</th>
-                                <th scope="col">Room Name</th>
+                                <th scope="col">Grade Level</th>
+                                <th scope="col">Subject</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -164,19 +175,19 @@ ob_start();
         </div>
     </div>
 </section>
-
 <?php
-
 $content = ob_get_clean();
+
 ob_start();
 ?>
+
 <script>
 $(document).ready(function() {
     // initializing datatables
     var dataTable = $('#table').DataTable({
         "serverSide": true,
-        "paging": true,
         "searching": false,
+        "paging": true,
         "pagingType": "simple",
         "scrollX": true,
         "sScrollXInner": "100%",
@@ -185,8 +196,8 @@ $(document).ready(function() {
             type: "POST",
             data: function(d) {
                 return $.extend({}, d, {
-                    "room": true,
-                    "filter_building": $('#filter_building').val()
+                    "subject": true,
+                    "filter_grade_level": $('#filter_grade_level').val()
                 })
             },
             error: function(xhr, error, code) {
@@ -208,17 +219,17 @@ $(document).ready(function() {
         dataTable.ajax.reload(null, false);
     }, 10000); // END DATATABLES
 
+    // filter
     dataTable.draw();
 
-    $('#filter_building').bind("keyup change", function() {
+    $('#filter_grade_level').bind("keyup change", function() {
         dataTable.draw();
     })
 
-    // reset filter
     $('#reset_filter').on('click', function(e) {
         e.preventDefault();
 
-        $('#filter_building').val('').trigger("change");
+        $('#filter_grade_level').val('').trigger("change");
     })
 
     // modal function
@@ -229,11 +240,11 @@ $(document).ready(function() {
     })
 
     // - submit add modal
-    $(document).on('submit', '#add_room_form', function(e) {
+    $(document).on('submit', '#add_subject_form', function(e) {
         e.preventDefault();
 
         let form = new FormData(this);
-        form.append('add_room', true);
+        form.append('add_subject', true);
 
         $.ajax({
             type: "POST",
@@ -243,11 +254,11 @@ $(document).ready(function() {
             contentType: false,
             cache: false,
             beforeSend: function() {
-                $('#add_room_btn').addClass('d-none');
+                $('#add_subject_btn').addClass('d-none');
                 $('.spinner').removeClass('d-none');
             },
             complete: function() {
-                $('#add_room_btn').removeClass('d-none');
+                $('#add_subject_btn').removeClass('d-none');
                 $('.spinner').addClass('d-none');
             },
             success: function(response) {
@@ -258,7 +269,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Room added successfully!',
+                        text: 'Subject added successfully!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -271,7 +282,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Sorry!',
-                        text: 'Building already exist!',
+                        text: 'Subject already exist!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -302,10 +313,10 @@ $(document).ready(function() {
     $(document).on('click', '#get_edit', function(e) {
         e.preventDefault();
 
-        let room_id = $(this).data('id');
+        let subject_id = $(this).data('id');
         let form = new FormData();
-        form.append('get_room_info', true);
-        form.append('room_id', room_id);
+        form.append('get_subject_info', true);
+        form.append('subject_id', subject_id);
 
         $.ajax({
             type: "POST",
@@ -318,19 +329,19 @@ $(document).ready(function() {
                 console.log(response);
                 $('#edit_modal').modal('show');
                 let data = JSON.parse(response);
-                $('#edit_room_id').val(data.id);
-                $('#edit_building_id').val(data.building_id);
-                $('#edit_room_name').val(data.room_name);
+                $('#edit_subject_id').val(data.id);
+                $('#edit_grade_level').val(data.grade_level_id);
+                $('#edit_subject_name').val(data.subject);
             }
         })
     })
 
     // submit edit building
-    $(document).on('submit', '#edit_room_form', function(e) {
+    $(document).on('submit', '#edit_subject_form', function(e) {
         e.preventDefault();
 
         let form = new FormData(this);
-        form.append('edit_room', true);
+        form.append('edit_subject', true);
 
         $.ajax({
             type: "POST",
@@ -340,11 +351,11 @@ $(document).ready(function() {
             contentType: false,
             cache: false,
             beforeSend: function() {
-                $('#edit_room_btn').addClass('d-none');
+                $('#edit_subject_btn').addClass('d-none');
                 $('.spinner').removeClass('d-none');
             },
             complete: function() {
-                $('#edit_room_btn').removeClass('d-none');
+                $('#edit_subject_btn').removeClass('d-none');
                 $('.spinner').addClass('d-none');
             },
             success: function(response) {
@@ -355,7 +366,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Room updated successfully!',
+                        text: 'Subject updated successfully!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -368,7 +379,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Sorry!',
-                        text: 'Room already exist!',
+                        text: 'Subject already exist!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -416,7 +427,7 @@ $(document).ready(function() {
             if (result.isConfirmed) {
                 let form = new FormData();
                 form.append('id', id);
-                form.append('delete_room', true);
+                form.append('delete_subject', true);
 
                 $.ajax({
                     type: "POST",
@@ -471,6 +482,7 @@ $(document).ready(function() {
     });
 })
 </script>
+
 <?php
 $script = ob_get_clean();
 include('./layout/master.php');

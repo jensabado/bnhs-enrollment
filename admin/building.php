@@ -1,7 +1,10 @@
 <?php
 $page_title = 'Building';
 
-$content = '
+ob_start();
+
+?>
+
 <!-- Modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id="add_modal">
     <div class="modal-dialog" role="document">
@@ -97,9 +100,10 @@ $content = '
         </div>
     </div>
 </section>
-';
+<?php
+$content = ob_get_clean();
 
-include('./layout/master.php');
+ob_start();
 ?>
 
 <script>
@@ -385,3 +389,8 @@ $(document).ready(function() {
     });
 })
 </script>
+
+<?php
+$script = ob_get_clean();
+include('./layout/master.php');
+?>

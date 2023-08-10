@@ -184,11 +184,9 @@ ob_start();
 </section>
 
 <?php
-
 $content = ob_get_clean();
-include('./layout/master.php');
+ob_start();
 ?>
-
 <script>
 $(document).ready(function() {
     // initializing datatables
@@ -237,7 +235,7 @@ $(document).ready(function() {
 
         if (building_id == '') {
             $('#filter_room').attr('disabled', true);
-            $('#filter_room').val('');
+            $('#filter_room').val('').trigger('change');
         } else {
             $('#filter_room').attr('disabled', false);
 
@@ -575,3 +573,8 @@ $(document).ready(function() {
     });
 })
 </script>
+<?php
+$script = ob_get_clean();
+include('./layout/master.php');
+?>
+

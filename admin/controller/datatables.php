@@ -229,3 +229,81 @@ if (isset($_POST['section'])) {
 
     echo json_encode($output);
 }
+
+if (isset($_POST['subject'])) {
+    $column = array('id', 'grade_level', 'subject');
+
+    $query = "SELECT tbl_subject.id, tbl_grade_level.grade, tbl_subject.subject
+    FROM tbl_subject
+    LEFT JOIN tbl_grade_level
+    ON tbl_subject.grade_level_id = tbl_grade_level.id
+    WHERE tbl_subject.is_deleted = 'no'";
+
+    if($_POST['filter_grade_level'] != '') {
+        $query .= 'AND tbl_subject.grade_level_id = "'.$_POST['filter_grade_level'].'"';
+    }
+
+    if (isset($_POST['search']['value'])) {
+        $query .= '
+        AND (tbl_subject.id LIKE "%' . $_POST['search']['value'] . '%"
+        OR tbl_grade_level.grade LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_subject.subject LIKE "%' . $_POST['search']['value'] . '%" )
+        ';
+    }
+
+    if (isset($_POST['order'])) {
+        $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+    } else {
+        $query .= 'ORDER BY id DESC ';
+    }
+
+    $query1 = '';
+
+    if ($_POST['length'] != -1) {
+        $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    }
+
+    $statement = $connect->prepare($query);
+
+    $statement->execute();
+
+    $number_filter_row = $statement->rowCount();
+
+    $statement = $connect->prepare($query . $query1);
+
+    $statement->execute();
+
+    $result = $statement->fetchAll();
+
+    $data = array();
+
+    foreach ($result as $row) {
+        $sub_array = array();
+        $sub_array[] = '#' . $row['id'];
+        $sub_array[] = ucwords($row['grade']);
+        $sub_array[] = ucwords($row['subject']);
+        $sub_array[] = '<div class="d-flex flex-row align-items-center gap-2" style="gap: 5px;"> <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-regular fa-pen-to-square"></i></button> <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash"></i></button></div>';
+        $data[] = $sub_array;
+    }
+
+    function count_all_data($connect)
+    {
+        $query = "SELECT tbl_subject.id, tbl_grade_level.grade, tbl_subject.subject
+        FROM tbl_subject
+        LEFT JOIN tbl_grade_level
+        ON tbl_subject.grade_level_id = tbl_grade_level.id
+        WHERE tbl_subject.is_deleted = 'no'";
+        $statement = $connect->prepare($query);
+        $statement->execute();
+        return $statement->rowCount();
+    }
+
+    $output = array(
+        'draw' => intval($_POST['draw']),
+        'recordsTotal' => count_all_data($connect),
+        'recordsFiltered' => $number_filter_row,
+        'data' => $data,
+    );
+
+    echo json_encode($output);
+}

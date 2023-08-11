@@ -233,7 +233,11 @@ if (isset($_POST['section'])) {
 if (isset($_POST['subject'])) {
     $column = array('id', 'grade_level', 'subject');
 
-    $query = "SELECT * FROM tbl_teacher WHERE is_deleted = 'no'";
+    $query = "SELECT tbl_subject.id, tbl_grade_level.grade, tbl_subject.subject
+    FROM tbl_subject
+    LEFT JOIN tbl_grade_level
+    ON tbl_subject.grade_level_id = tbl_grade_level.id
+    WHERE tbl_subject.is_deleted = 'no'";
 
     if($_POST['filter_grade_level'] != '') {
         $query .= 'AND tbl_subject.grade_level_id = "'.$_POST['filter_grade_level'].'"';

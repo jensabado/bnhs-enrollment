@@ -110,6 +110,10 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
                                 <span>Section</span></a></li>
                         <li><a class="nav-link" href="subject.php"><i class="fas fa-solid fa-book"></i>
                                 <span>Subject</span></a></li>
+                        <li><a class="nav-link" href="teacher.php"><i class="fas fa-solid fa-chalkboard-user"></i>
+                                <span>Teacher</span></a></li>
+                        <li><a class="nav-link" href="teacher-subject.php"><i class="fas fa-solid fa-person-chalkboard"></i>
+                                <span>Teacher Subject</span></a></li>
                         <li class="menu-header">Stisla</li>
                         <li class="dropdown">
                             <a href="#" class="nav-link has-dropdown"><i class="fas fa-th-large"></i>

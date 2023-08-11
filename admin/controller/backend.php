@@ -465,3 +465,152 @@ if (isset($_POST['delete_subject'])) {
 
     mysqli_stmt_close($delete_stmt);
 }
+
+// teacher.php
+if (isset($_POST['add_teacher'])) {
+    $fname = $_POST['add_f_name'];
+    $lname = $_POST['add_l_name'];
+    $gender = $_POST['add_gender'];
+    $mobile_no = $_POST['add_mobile_no'];
+    $email = $_POST['add_email'];
+    $password = $_POST['add_password'];
+    $encrypted_password = md5($password);
+
+    if (isset($_FILES['add_avatar']) && !empty($_FILES['add_avatar']['name'])) {
+        $avatar = $_FILES['add_avatar']['name'];
+        $avatar_tmp = $_FILES['add_avatar']['tmp_name'];
+
+        $validation = mysqli_query($conn, "SELECT * FROM tbl_teacher WHERE email = '$email' AND is_deleted = 'no'");
+
+        if (mysqli_num_rows($validation) > 0) {
+            echo 'already exist';
+        } else {
+            $img_ext = explode('.', $avatar);
+            $img_ext = strtolower(end($img_ext));
+
+            $new_img_name = uniqid() . '.' . $img_ext;
+
+            $insert = mysqli_query($conn, "INSERT INTO tbl_teacher (f_name, l_name, gender, mobile_no, avatar, email, password) VALUES ('$fname', '$lname', '$gender', '$mobile_no', '$new_img_name', '$email', '$encrypted_password')");
+
+            if ($insert) {
+                move_uploaded_file($avatar_tmp, '../assets/img/avatar/' . $new_img_name);
+
+                echo 'success';
+            }
+        }
+    } else {
+        $validation = mysqli_query($conn, "SELECT * FROM tbl_teacher WHERE email = '$email' AND is_deleted = 'no'");
+
+        if (mysqli_num_rows($validation) > 0) {
+            echo 'already exist';
+        } else {
+            $insert = mysqli_query($conn, "INSERT INTO tbl_teacher (f_name, l_name, gender, mobile_no, email, password) VALUES ('$fname', '$lname', '$gender', '$mobile_no', '$email', '$encrypted_password')");
+
+            if ($insert) {
+                echo 'success';
+            }
+        }
+    }
+}
+
+if (isset($_POST['get_teacher_info'])) {
+    $id = $_POST['teacher_id'];
+
+    $getTeacherInfoStmt = mysqli_prepare($conn, "SELECT id, f_name, l_name, gender, mobile_no, avatar, status FROM tbl_teacher WHERE id = ?");
+
+    mysqli_stmt_bind_param($getTeacherInfoStmt, "i", $id);
+
+    mysqli_stmt_execute($getTeacherInfoStmt);
+
+    $getTeacherInfoResult = mysqli_stmt_get_result($getTeacherInfoStmt);
+
+    $row = mysqli_fetch_assoc($getTeacherInfoResult);
+
+    if ($row) {
+        $result = array(
+            'id' => $row['id'],
+            'f_name' => $row['f_name'],
+            'l_name' => $row['l_name'],
+            'gender' => $row['gender'],
+            'mobile_no' => $row['mobile_no'],
+            'avatar' => $row['avatar'],
+            'status' => $row['status'],
+        );
+
+        echo json_encode($result);
+    } else {
+        echo 'Teacher not found';
+    }
+
+    mysqli_stmt_close($getTeacherInfoStmt);
+}
+
+if (isset($_POST['edit_teacher'])) {
+    $id = $_POST['edit_teacher_id'];
+    $fname = $_POST['edit_f_name'];
+    $lname = $_POST['edit_l_name'];
+    $gender = $_POST['edit_gender'];
+    $mobile_no = $_POST['edit_mobile_no'];
+    $status = $_POST['edit_status'];
+
+    if (isset($_FILES['edit_avatar']) && !empty($_FILES['edit_avatar']['name'])) {
+        $avatar = $_FILES['edit_avatar']['name'];
+        $avatar_tmp = $_FILES['edit_avatar']['tmp_name'];
+
+        $img_ext = explode('.', $avatar);
+        $img_ext = strtolower(end($img_ext));
+
+        $new_img_name = uniqid() . '.' . $img_ext;
+
+        $get_old_avatar = mysqli_prepare($conn, "SELECT avatar FROM tbl_teacher WHERE id = ?");
+        mysqli_stmt_bind_param($get_old_avatar, "i", $id);
+        mysqli_stmt_execute($get_old_avatar);
+        $get_old_avatar_result = mysqli_stmt_get_result($get_old_avatar);
+        $old_avatar_row = mysqli_fetch_assoc($get_old_avatar_result);
+        $old_avatar = $old_avatar_row['avatar'];
+
+        $update = mysqli_prepare($conn, "UPDATE tbl_teacher SET f_name = ?, l_name = ?, gender = ?, mobile_no = ?, status = ?, avatar = ? WHERE id = ?");
+        mysqli_stmt_bind_param($update, "ssssssi", $fname, $lname, $gender, $mobile_no, $status, $new_img_name, $id);
+
+        if (mysqli_stmt_execute($update)) {
+            if (file_exists('../assets/img/avatar/' . $old_avatar)) {
+                unlink('../assets/img/avatar/' . $old_avatar);
+            }
+            move_uploaded_file($avatar_tmp, '../assets/img/avatar/' . $new_img_name);
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+
+        mysqli_stmt_close($update);
+    } else {
+        $update = mysqli_prepare($conn, "UPDATE tbl_teacher SET f_name = ?, l_name = ?, gender = ?, mobile_no = ?, status = ? WHERE id = ?");
+        mysqli_stmt_bind_param($update, "sssssi", $fname, $lname, $gender, $mobile_no, $status, $id);
+
+        if (mysqli_stmt_execute($update)) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+
+        mysqli_stmt_close($update);
+    }
+
+    mysqli_close($conn);
+}
+
+if (isset($_POST['delete_teacher'])) {
+    $id = $_POST['id'];
+
+    $delete = mysqli_prepare($conn, "UPDATE tbl_teacher SET is_deleted = 'yes' WHERE id = ?");
+    mysqli_stmt_bind_param($delete, "i", $id);
+
+    if (mysqli_stmt_execute($delete)) {
+        echo 'success';
+    } else {
+        echo 'error';
+    }
+
+    mysqli_stmt_close($delete);
+    mysqli_close($conn);
+}

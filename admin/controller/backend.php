@@ -267,12 +267,13 @@ if (isset($_POST['get_room'])) {
 }
 
 if (isset($_POST['add_section'])) {
+    $grade_level_id = $_POST['add_grade_level_id'];
     $building_id = $_POST['add_section_building_id'];
     $room_id = $_POST['add_section_room_id'];
     $name = $_POST['add_section_name'];
 
-    $stmt = $conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND room_id = ? AND section = ?");
-    $stmt->bind_param("iis", $building_id, $room_id, $name);
+    $stmt = $conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND grade_level_id = ? AND room_id = ? AND section = ?");
+    $stmt->bind_param("iiis", $building_id, $grade_level_id, $room_id, $name);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -281,8 +282,8 @@ if (isset($_POST['add_section'])) {
     } else {
         $stmt->close();
 
-        $stmt = $conn->prepare("INSERT INTO tbl_section (building_id, room_id, section) VALUES (?, ?, ?)");
-        $stmt->bind_param("iis", $building_id, $room_id, $name);
+        $stmt = $conn->prepare("INSERT INTO tbl_section (building_id, grade_level_id, room_id, section) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iiis", $building_id, $grade_level_id, $room_id, $name);
         $insert = $stmt->execute();
 
         if ($insert) {
@@ -296,20 +297,21 @@ if (isset($_POST['add_section'])) {
 if (isset($_POST['get_section_info'])) {
     $id = $_POST['section_id'];
 
-    $getSectionInfoStmt = mysqli_prepare($conn, "SELECT id, building_id, room_id, section FROM tbl_section WHERE id = ?");
+    $getSectionInfoStmt = mysqli_prepare($conn, "SELECT id, building_id, grade_level_id, room_id, section FROM tbl_section WHERE id = ?");
 
     mysqli_stmt_bind_param($getSectionInfoStmt, "i", $id);
 
     mysqli_stmt_execute($getSectionInfoStmt);
 
-    $getRoomInfoResult = mysqli_stmt_get_result($getSectionInfoStmt);
+    $getSectionInfoResult = mysqli_stmt_get_result($getSectionInfoStmt);
 
-    $row = mysqli_fetch_assoc($getRoomInfoResult);
+    $row = mysqli_fetch_assoc($getSectionInfoResult);
 
     if ($row) {
         $result = array(
             'id' => $row['id'],
             'building_id' => $row['building_id'],
+            'grade_level_id' => $row['grade_level_id'],
             'room_id' => $row['room_id'],
             'section' => $row['section'],
         );
@@ -324,12 +326,13 @@ if (isset($_POST['get_section_info'])) {
 
 if (isset($_POST['edit_section'])) {
     $id = $_POST['edit_section_id'];
+    $grade_level_id = $_POST['edit_grade_level_id'];
     $building_id = $_POST['edit_section_building_id'];
     $room_id = $_POST['edit_section_room_id'];
     $name = $_POST['edit_section_name'];
 
-    $stmt = $conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND room_id = ? AND section = ? AND id != ? AND is_deleted = 'no'");
-    $stmt->bind_param("iisi", $building_id, $room_id, $name, $id);
+    $stmt = $conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND grade_level_id = ? AND room_id = ? AND section = ? AND id != ? AND is_deleted = 'no'");
+    $stmt->bind_param("iiisi", $building_id, $grade_level_id, $room_id, $name, $id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -338,8 +341,8 @@ if (isset($_POST['edit_section'])) {
     } else {
         $stmt->close();
 
-        $stmt = $conn->prepare("UPDATE tbl_section SET building_id = ?, room_id = ?, section = ? WHERE id = ?");
-        $stmt->bind_param("iisi", $building_id, $room_id, $name, $id);
+        $stmt = $conn->prepare("UPDATE tbl_section SET building_id = ?, grade_level_id = ?, room_id = ?, section = ? WHERE id = ?");
+        $stmt->bind_param("iiisi", $building_id, $grade_level_id, $room_id, $name, $id);
         $update = $stmt->execute();
 
         if ($update) {
@@ -733,10 +736,8 @@ if(isset($_POST['edit_teacher_subject'])) {
 if(isset($_POST['delete_teacher_subject'])) {
     $id = $_POST['id'];
 
-    // Prepare the UPDATE query
     $delete_query = "UPDATE tbl_teacher_subject SET is_deleted = 'yes' WHERE id = ?";
 
-    // Prepare and execute the UPDATE statement
     $delete_statement = mysqli_prepare($conn, $delete_query);
     mysqli_stmt_bind_param($delete_statement, "i", $id);
     $delete_result = mysqli_stmt_execute($delete_statement);
@@ -745,31 +746,107 @@ if(isset($_POST['delete_teacher_subject'])) {
         echo 'success';
     }
 
-    // Close the prepared statement
     mysqli_stmt_close($delete_statement);
 }
-if(isset($_POST['delete_teacher_subject'])) {
-    $id = $_POST['id'];
 
-    // Prepare the UPDATE query
-    $delete_query = "UPDATE tbl_teacher_subject SET is_deleted = 'yes' WHERE id = ?";
+// classroom-advisory.php
+if(isset($_POST['add_classroom_advisory'])) {
+    $grade_section_id = $_POST['add_grade_level'];
+    $teacher_id = $_POST['add_teacher_id'];
 
-    // Prepare and execute the UPDATE statement
-    $delete_statement = mysqli_prepare($conn, $delete_query);
-    mysqli_stmt_bind_param($delete_statement, "i", $id);
-    $delete_result = mysqli_stmt_execute($delete_statement);
+    $selectQuery = "SELECT * FROM tbl_classroom_advisory WHERE section_id = ? AND is_deleted = 'no'";
+    $stmt = mysqli_prepare($conn, $selectQuery);
+    
+    mysqli_stmt_bind_param($stmt, "i", $grade_section_id);
 
-    if($delete_result) {
-        echo 'success';
+    mysqli_stmt_execute($stmt);
+
+    $validation = mysqli_stmt_get_result($stmt);
+
+    if(mysqli_num_rows($validation) > 0) {
+        echo 'already exist';
+    } else {
+        $insertQuery = "INSERT INTO tbl_classroom_advisory (section_id, teacher_id) VALUES (?, ?)";
+        $stmtInsert = mysqli_prepare($conn, $insertQuery);
+
+        mysqli_stmt_bind_param($stmtInsert, "ii", $grade_section_id, $teacher_id);
+
+        if(mysqli_stmt_execute($stmtInsert)) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
     }
 
-    // Close the prepared statement
-    mysqli_stmt_close($delete_statement);
+    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmtInsert);
 }
-if(isset($_POST['delete_teacher_subject'])) {
+
+if (isset($_POST['get_classroom_advisory_info'])) {
+    $id = $_POST['classroom_advisory_id'];
+
+    $getClassroomAdvisoryInfoStmt = mysqli_prepare($conn, "SELECT id, section_id, teacher_id FROM tbl_classroom_advisory WHERE id = ?");
+
+    mysqli_stmt_bind_param($getClassroomAdvisoryInfoStmt, "i", $id);
+
+    mysqli_stmt_execute($getClassroomAdvisoryInfoStmt);
+
+    $getClassroomAdvisoryInfoResult = mysqli_stmt_get_result($getClassroomAdvisoryInfoStmt);
+
+    $row = mysqli_fetch_assoc($getClassroomAdvisoryInfoResult);
+
+    if ($row) {
+        $result = array(
+            'id' => $row['id'],
+            'section_id' => $row['section_id'],
+            'teacher_id' => $row['teacher_id'],
+        );
+
+        echo json_encode($result);
+    } else {
+        echo 'Teacher Subject not found';
+    }
+
+    mysqli_stmt_close($getClassroomAdvisoryInfoStmt);
+}
+
+if(isset($_POST['edit_classroom_advisory'])) {
+    $id = $_POST['edit_classroom_advisory_id'];
+    $section_id = $_POST['edit_grade_level'];
+    $teacher_id = $_POST['edit_teacher_id'];
+
+    $selectQuery = "SELECT * FROM tbl_classroom_advisory WHERE section_id = ? AND id = ? AND is_deleted = 'no'";
+    $stmt = mysqli_prepare($conn, $selectQuery);
+    
+    mysqli_stmt_bind_param($stmt, "ii", $section_id, $id);
+
+    mysqli_stmt_execute($stmt);
+
+    $validation = mysqli_stmt_get_result($stmt);
+
+    if(mysqli_num_rows($validation) > 0) {
+        echo 'already exist';
+    } else {
+        $updateQuery = "UPDATE tbl_classroom_advisory SET section_id = ?, teacher_id = ? WHERE id = ?";
+        $stmtUpdate = mysqli_prepare($conn, $updateQuery);
+
+        mysqli_stmt_bind_param($stmtUpdate, "iii", $section_id, $teacher_id, $id);
+
+        if(mysqli_stmt_execute($stmtUpdate)) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+    }
+
+    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmtUpdate);
+}
+
+if(isset($_POST['delete_classroom_advisory'])) {
     $id = $_POST['id'];
 
-    $delete_query = "UPDATE tbl_teacher_subject SET is_deleted = 'yes' WHERE id = ?";
+    $delete_query = "UPDATE tbl_classroom_advisory SET is_deleted = 'yes' WHERE id = ?";
 
     $delete_statement = mysqli_prepare($conn, $delete_query);
     mysqli_stmt_bind_param($delete_statement, "i", $id);

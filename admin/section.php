@@ -17,6 +17,29 @@ ob_start();
             <div class="modal-body">
                 <form action="" id="add_section_form">
                     <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="">Grade Level</label>
+                            <select style="width: 100% !important;" name="add_grade_level_id" id="add_grade_level_id"
+                                class="form-control">
+                                <option value="" selected disabled>SELECT GRADE LEVEL</option>
+                                <?php
+                                $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level");
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                
+                                while ($fetch_grade_level = $result->fetch_assoc()) {
+                                    $id = $fetch_grade_level['id'];
+                                    $grade = ucwords($fetch_grade_level['grade']);
+                                
+                                    echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($grade) . '</option>';
+                                }
+                                
+                                $stmt->close();                    
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-12 d-flex flex-column">
                             <label for="">Select Building</label>
                             <select style="width: 100% !important;" class="form-control" name="add_section_building_id"
@@ -71,7 +94,7 @@ ob_start();
             </div>
             <div class="modal-body">
                 <form action="" id="edit_section_form">
-                    <div class="row mb-3">
+                    <div class="row mb-3 d-none">
                         <div class="col-12">
                             <label for="">Section ID</label>
                             <input class="form-control" type="text" name="edit_section_id" id="edit_section_id"
@@ -80,8 +103,32 @@ ob_start();
                     </div>
                     <div class="row mb-3">
                         <div class="col-12">
+                            <label for="">Grade Level</label>
+                            <select style="width: 100% !important;" name="edit_grade_level_id" id="edit_grade_level_id"
+                                class="form-control">
+                                <option value="" selected disabled>SELECT GRADE LEVEL</option>
+                                <?php
+                                $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level");
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                
+                                while ($fetch_grade_level = $result->fetch_assoc()) {
+                                    $id = $fetch_grade_level['id'];
+                                    $grade = ucwords($fetch_grade_level['grade']);
+                                
+                                    echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($grade) . '</option>';
+                                }
+                                
+                                $stmt->close();                    
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
                             <label for="">Select Building</label>
-                            <select class="form-control" name="edit_section_building_id" id="edit_section_building_id">
+                            <select style="width: 100% !important;" class="form-control" name="edit_section_building_id"
+                                id="edit_section_building_id">
                                 <option disabled value="" selected>SELECT BUILDING</option>';
                                 <?php
                                 $get_building = mysqli_query($conn, "SELECT * FROM tbl_building WHERE is_deleted = 'no'");
@@ -97,8 +144,8 @@ ob_start();
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="">Select Room</label>
-                            <select class="form-control" name="edit_section_room_id" id="edit_section_room_id" disabled
-                                required>
+                            <select style="width: 100% !important;" class="form-control" name="edit_section_room_id"
+                                id="edit_section_room_id" disabled required>
                                 <option value="">SELECT BUILDING FIRST</option>
                             </select>
                         </div>
@@ -135,8 +182,27 @@ ob_start();
                     SECTION</button>
             </div>
             <div class="card-body">
-                <div class="row align-items-center justify-content-center mb-3">
-                    <div class="col-sm-3  mb-3 mb-md-0">
+                <div class="row d-flex flex-wrap align-items-center justify-content-center mb-3">
+                    <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
+                        <select class="form-control" name="filter_grade_level_id" id="filter_grade_level_id">
+                            <option selected value="">SELECT GRADE LEVEL</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level");
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            
+                            while ($fetch_grade_level = $result->fetch_assoc()) {
+                                $id = $fetch_grade_level['id'];
+                                $grade = ucwords($fetch_grade_level['grade']);
+                            
+                                echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($grade) . '</option>';
+                            }
+                            
+                            $stmt->close();                    
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
                         <select class="form-control" name="filter_building" id="filter_building">
                             <option selected value="">SELECT BUILDING</option>
                             <?php
@@ -157,13 +223,13 @@ ob_start();
                             ?>
                         </select>
                     </div>
-                    <div class="col-sm-3 mb-3 mb-md-0">
+                    <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
                         <select class="form-control" name="filter_room" id="filter_room" disabled>
                             <option selected value="">SELECT BUILDING FIRST</option>
                         </select>
                     </div>
-                    <div class="col-sm-3">
-                        <button type="button" class="btn btn-warning mb-3" id="reset_filter">RESET FILTER</button>
+                    <div class="col-sm-6 col-md-3">
+                        <button type="button" class="btn btn-warning" id="reset_filter">RESET FILTER</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -172,6 +238,7 @@ ob_start();
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Building Name</th>
+                                <th scope="col">Grade Level</th>
                                 <th scope="col">Room Name</th>
                                 <th scope="col">Section Name</th>
                                 <th scope="col">Action</th>
@@ -204,9 +271,13 @@ $(document).ready(function() {
             data: function(d) {
                 return $.extend({}, d, {
                     "section": true,
+                    "filter_grade_level_id": $('#filter_grade_level_id').val(),
                     "filter_building": $('#filter_building').val(),
                     "filter_room": $('#filter_room').val(),
                 })
+            },
+            error: function(xhr, error, code) {
+                console.log(xhr, code);
             }
         },
         "order": [
@@ -227,14 +298,31 @@ $(document).ready(function() {
     dataTable.draw();
 
     // select2
+    $('#filter_grade_level_id').select2();
     $('#filter_building').select2();
     $('#filter_room').select2();
-    $('#add_section_building_id').select2();
+    $('#add_grade_level_id').select2({
+        dropdownParent: $('#add_modal')
+    });
+    $('#edit_grade_level_id').select2({
+        dropdownParent: $('#edit_modal')
+    });
+    $('#add_section_building_id').select2({
+        dropdownParent: $('#add_modal')
+    });
+    $('#edit_section_building_id').select2({
+        dropdownParent: $('#edit_modal')
+    });
     $('#add_section_room_id').select2({
+        dropdownParent: $('#edit_modal'),
+        placeholder: "SELECT BUILDING FIRST",
+    });
+    $('#edit_section_room_id').select2({
+        dropdownParent: $('#edit_modal'),
         placeholder: "SELECT BUILDING FIRST",
     });
 
-    $('#filter_building, #filter_room').bind("keyup change", function() {
+    $('#filter_grade_level_id, #filter_building, #filter_room').bind("keyup change", function() {
         dataTable.draw();
     })
 
@@ -289,6 +377,7 @@ $(document).ready(function() {
                 },
                 success: function(data) {
                     $('#add_section_room_id').select2({
+                        dropdownParent: $('#add_modal'),
                         placeholder: "SELECT BUILDING FIRST",
                     });
                     $('#add_section_room_id').html(data);
@@ -417,8 +506,9 @@ $(document).ready(function() {
                 $('#edit_modal').modal('show');
                 let data = JSON.parse(response);
                 $('#edit_section_id').val(data.id);
-                $('#edit_section_building_id').val(data.building_id);
-                $('#edit_section_room_id').val(data.room_id);
+                $('#edit_section_building_id').val(data.building_id).trigger('change');
+                $('#edit_grade_level_id').val(data.grade_level_id).trigger('change');
+                $('#edit_section_room_id').val(data.room_id).trigger('change');
                 $('#edit_section_name').val(data.section);
 
                 $('#edit_section_room_id').attr('disabled', false);
@@ -432,7 +522,8 @@ $(document).ready(function() {
                     },
                     success: function(response) {
                         $('#edit_section_room_id').html(response);
-                        $('#edit_section_room_id').val(data.room_id);
+                        $('#edit_section_room_id').val(data.room_id).trigger(
+                            'change');
                     }
                 })
             }

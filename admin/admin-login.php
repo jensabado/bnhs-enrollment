@@ -114,7 +114,7 @@ if(isset($_SESSION['bnhses_admin_id'])) {
 
             $.ajax({
                 type: "POST",
-                url: "./controller/backend.php",
+                url: "./controller/backend",
                 data: form,
                 processData: false,
                 contentType: false,
@@ -155,7 +155,7 @@ if(isset($_SESSION['bnhses_admin_id'])) {
                             background: '#fff',
                         })
                     } else if (response.includes('success')) {
-                        location.href = './index.php';
+                        location.href = './';
                     } else {
                         Swal.fire({
                             icon: 'error',

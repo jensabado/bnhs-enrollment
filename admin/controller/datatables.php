@@ -147,12 +147,19 @@ if (isset($_POST['room'])) {
 if (isset($_POST['section'])) {
     $column = array('id', 'building_name', 'room', 'section');
 
-    $query = "SELECT tbl_section.id, tbl_building.building, tbl_room.room, tbl_section.section
-        FROM tbl_section
-        LEFT JOIN tbl_room
-        ON tbl_section.room_id = tbl_room.id
-        LEFT JOIN tbl_building
-        ON tbl_room.building_id = tbl_building.id WHERE tbl_section.is_deleted = 'no' AND tbl_building.is_deleted = 'no' AND tbl_room.is_deleted = 'no'";
+    $query = "SELECT tbl_section.id, tbl_building.building, tbl_grade_level.grade, tbl_room.room, tbl_section.section
+    FROM tbl_section
+    LEFT JOIN tbl_room
+    ON tbl_section.room_id = tbl_room.id
+    LEFT JOIN tbl_building
+    ON tbl_room.building_id = tbl_building.id 
+    LEFT JOIN tbl_grade_level
+    ON tbl_section.grade_level_id = tbl_grade_level.id
+    WHERE tbl_section.is_deleted = 'no' AND tbl_building.is_deleted = 'no' AND tbl_room.is_deleted = 'no'";
+
+    if($_POST['filter_grade_level_id'] != '') {
+        $query .= 'AND tbl_section.grade_level_id = "'.$_POST['filter_grade_level_id'].'"';
+    }
 
     if($_POST['filter_building'] != '') {
         $query .= 'AND tbl_room.building_id = "'.$_POST['filter_building'].'"';
@@ -201,6 +208,7 @@ if (isset($_POST['section'])) {
         $sub_array = array();
         $sub_array[] = '#' . $row['id'];
         $sub_array[] = ucwords($row['building']);
+        $sub_array[] = ucwords($row['grade']);
         $sub_array[] = ucwords($row['room']);
         $sub_array[] = ucwords($row['section']);
         $sub_array[] = '<div class="d-flex flex-row align-items-center gap-2" style="gap: 5px;"> <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-regular fa-pen-to-square"></i></button> <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash"></i></button></div>';
@@ -209,12 +217,15 @@ if (isset($_POST['section'])) {
 
     function count_all_data($connect)
     {
-        $query = "SELECT tbl_section.id, tbl_building.building, tbl_room.room, tbl_section.section
+        $query = "SELECT tbl_section.id, tbl_building.building, tbl_grade_level.grade, tbl_room.room, tbl_section.section
         FROM tbl_section
         LEFT JOIN tbl_room
         ON tbl_section.room_id = tbl_room.id
         LEFT JOIN tbl_building
-        ON tbl_room.building_id = tbl_building.id WHERE tbl_section.is_deleted = 'no' AND tbl_building.is_deleted = 'no' AND tbl_room.is_deleted = 'no'";
+        ON tbl_room.building_id = tbl_building.id 
+        LEFT JOIN tbl_grade_level
+        ON tbl_section.grade_level_id = tbl_grade_level.id
+        WHERE tbl_section.is_deleted = 'no' AND tbl_building.is_deleted = 'no' AND tbl_room.is_deleted = 'no'";
         $statement = $connect->prepare($query);
         $statement->execute();
         return $statement->rowCount();
@@ -475,6 +486,96 @@ if (isset($_POST['teacher_subject'])) {
         LEFT JOIN tbl_grade_level
         ON tbl_subject.grade_level_id = tbl_grade_level.id
         WHERE tbl_teacher_subject.is_deleted = 'no'";
+        $statement = $connect->prepare($query);
+        $statement->execute();
+        return $statement->rowCount();
+    }
+
+    $output = array(
+        'draw' => intval($_POST['draw']),
+        'recordsTotal' => count_all_data($connect),
+        'recordsFiltered' => $number_filter_row,
+        'data' => $data,
+    );
+
+    echo json_encode($output);
+}
+
+if (isset($_POST['classroom_advisory'])) {
+    $column = array('id', 'grade_level', 'section', 'teacher');
+
+    $query = "SELECT tbl_classroom_advisory.id, tbl_grade_level.grade, tbl_section.section, tbl_teacher.f_name, tbl_teacher.l_name
+    FROM tbl_classroom_advisory
+    LEFT JOIN tbl_section
+    ON tbl_classroom_advisory.section_id = tbl_section.id
+    LEFT JOIN tbl_teacher
+    ON tbl_classroom_advisory.teacher_id = tbl_teacher.id
+    LEFT JOIN tbl_grade_level
+    ON tbl_section.grade_level_id = tbl_grade_level.id
+    WHERE tbl_section.is_deleted = 'no' AND tbl_classroom_advisory.is_deleted = 'no'";
+
+    if($_POST['filter_grade_level'] != '') {
+        $query .= 'AND tbl_section.grade_level_id = "'.$_POST['filter_grade_level'].'"';
+    }
+
+    if (isset($_POST['search']['value'])) {
+        $query .= '
+        AND (tbl_classroom_advisory.id LIKE "%' . $_POST['search']['value'] . '%"
+        OR tbl_grade_level.grade LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_section.section LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_teacher.f_name LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_teacher.l_name LIKE "%' . $_POST['search']['value'] . '%" )
+        ';
+    }
+
+    if (isset($_POST['order'])) {
+        $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+    } else {
+        $query .= 'ORDER BY id DESC ';
+    }
+
+    $query1 = '';
+
+    if ($_POST['length'] != -1) {
+        $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    }
+
+    $statement = $connect->prepare($query);
+
+    $statement->execute();
+
+    $number_filter_row = $statement->rowCount();
+
+    $statement = $connect->prepare($query . $query1);
+
+    $statement->execute();
+
+    $result = $statement->fetchAll();
+
+    $data = array();
+
+    foreach ($result as $row) {
+        $sub_array = array();
+
+        $sub_array[] = '#' . $row['id'];
+        $sub_array[] = ucwords($row['grade']);
+        $sub_array[] = ucwords($row['section']);
+        $sub_array[] = ucwords($row['f_name'] . ' ' . $row['l_name']);;
+        $sub_array[] = '<div class="d-flex flex-row align-items-center gap-2" style="gap: 5px;"> <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-regular fa-pen-to-square"></i></button> <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash"></i></button></div>';
+        $data[] = $sub_array;
+    }
+
+    function count_all_data($connect)
+    {
+        $query = "SELECT tbl_classroom_advisory.id, tbl_grade_level.grade, tbl_section.section, tbl_teacher.f_name, tbl_teacher.l_name
+        FROM tbl_classroom_advisory
+        LEFT JOIN tbl_section
+        ON tbl_classroom_advisory.section_id = tbl_section.id
+        LEFT JOIN tbl_teacher
+        ON tbl_classroom_advisory.teacher_id = tbl_teacher.id
+        LEFT JOIN tbl_grade_level
+        ON tbl_section.grade_level_id = tbl_grade_level.id
+        WHERE tbl_section.is_deleted = 'no' AND tbl_classroom_advisory.is_deleted = 'no'";
         $statement = $connect->prepare($query);
         $statement->execute();
         return $statement->rowCount();

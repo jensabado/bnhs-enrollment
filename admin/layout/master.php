@@ -3,7 +3,7 @@ session_start();
 require_once('../database/connection.php');
 if(!isset($_SESSION['bnhses_admin_id'])) {
     echo "<script>
-    location.href = 'admin-login.php';
+    location.href = 'admin-login';
     </script>";
 } else {
     $admin_id = $_SESSION['bnhses_admin_id'];
@@ -83,7 +83,7 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
                                 <i class="far fa-user"></i> Profile
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="./controller/logout.php" class="dropdown-item has-icon text-danger">
+                            <a href="./controller/logout" class="dropdown-item has-icon text-danger">
                                 <i class="fas fa-sign-out-alt"></i> Logout
                             </a>
                         </div>
@@ -93,28 +93,30 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
             <div class="main-sidebar sidebar-style-2">
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
-                        <a href="index.php"><img src="../assets/img/logo.png" alt="" style="width: 50px;"></a>
+                        <a href="./"><img src="../assets/img/logo.png" alt="" style="width: 50px;"></a>
                     </div>
                     <div class="sidebar-brand sidebar-brand-sm">
-                        <a href="index.php"><img src="../assets/img/logo.png" alt="" style="width: 30px;"></a>
+                        <a href="./"><img src="../assets/img/logo.png" alt="" style="width: 30px;"></a>
                     </div>
                     <ul class="sidebar-menu">
                         <li class="menu-header">Dashboard</li>
-                        <li><a class="nav-link" href="index.php"><i class="fas fa-solid fa-fire-flame-curved"></i></i>
+                        <li><a class="nav-link" href="./"><i class="fas fa-solid fa-fire-flame-curved"></i></i>
                                 <span>Dashboard</span></a></li>
                         <li class="menu-header">School Information</li>
-                        <li><a class="nav-link" href="building.php"><i class="fas fa-solid fa-building"></i>
+                        <li><a class="nav-link" href="building"><i class="fas fa-solid fa-building"></i>
                                 <span>Building</span></a></li>
-                        <li><a class="nav-link" href="room.php"><i class="fas fa-solid fa-house"></i>
+                        <li><a class="nav-link" href="room"><i class="fas fa-solid fa-house"></i>
                                 <span>Room</span></a></li>
-                        <li><a class="nav-link" href="section.php"><i class="fas fa-solid fa-house-circle-check"></i>
+                        <li><a class="nav-link" href="section"><i class="fas fa-solid fa-house-circle-check"></i>
                                 <span>Section</span></a></li>
-                        <li><a class="nav-link" href="subject.php"><i class="fas fa-solid fa-book"></i>
+                        <li><a class="nav-link" href="subject"><i class="fas fa-solid fa-book"></i>
                                 <span>Subject</span></a></li>
-                        <li><a class="nav-link" href="teacher.php"><i class="fas fa-solid fa-chalkboard-user"></i>
+                        <li><a class="nav-link" href="teacher"><i class="fas fa-solid fa-chalkboard-user"></i>
                                 <span>Teacher</span></a></li>
-                        <li><a class="nav-link" href="teacher-subject.php"><i class="fas fa-solid fa-person-chalkboard"></i>
+                        <li><a class="nav-link" href="teacher-subject"><i class="fas fa-solid fa-person-chalkboard"></i>
                                 <span>Teacher Subject</span></a></li>
+                        <li><a class="nav-link" href="classroom-advisory"><i class="fas fa-solid fa-person-shelter"></i>
+                                <span>Classroom Advisory</span></a></li>
                         <li class="menu-header">Stisla</li>
                         <li class="dropdown">
                             <a href="#" class="nav-link has-dropdown"><i class="fas fa-th-large"></i>

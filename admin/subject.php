@@ -21,7 +21,7 @@ ob_start();
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="">Grade Level</label>
-                            <select class="form-control" name="add_grade_level" id="add_grade_level" required>
+                            <select style="width: 100% important;" class="form-control" name="add_grade_level" id="add_grade_level" required>
                                 <option value="" disabled selected>SELECT GRADE LEVEL</option>
                                 <?php
                                 $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level WHERE is_deleted = ?");
@@ -81,7 +81,7 @@ ob_start();
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="">Grade Level</label>
-                            <select class="form-control" name="edit_grade_level" id="edit_grade_level" required>
+                            <select style="width: 100% important;" class="form-control" name="edit_grade_level" id="edit_grade_level" required>
                                 <option value="" disabled selected>SELECT GRADE LEVEL</option>
                                 <?php
                                 $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level WHERE is_deleted = ?");
@@ -224,6 +224,12 @@ $(document).ready(function() {
 
     // select2
     $('#filter_grade_level').select2();
+    $('#add_grade_level').select2({
+        dropdownParent: $('#add_modal')
+    });
+    $('#edit_grade_level').select2({
+        dropdownParent: $('#edit_modal')
+    });
 
     $('#filter_grade_level').bind("keyup change", function() {
         dataTable.draw();
@@ -333,7 +339,7 @@ $(document).ready(function() {
                 $('#edit_modal').modal('show');
                 let data = JSON.parse(response);
                 $('#edit_subject_id').val(data.id);
-                $('#edit_grade_level').val(data.grade_level_id);
+                $('#edit_grade_level').val(data.grade_level_id).trigger('change');
                 $('#edit_subject_name').val(data.subject);
             }
         })

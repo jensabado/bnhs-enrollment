@@ -29,7 +29,7 @@ ob_start();
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label for="">Gender</label>
-                            <select class="form-control" name="add_gender" id="add_gender" required>
+                            <select style="width: 100% !important" class="form-control" name="add_gender" id="add_gender" required>
                                 <option value="" disabled selected>SELECT GENDER</option>
                                 <option value="FEMALE">FEMALE</option>
                                 <option value="MALE">MALE</option>
@@ -120,7 +120,7 @@ ob_start();
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label for="">Gender</label>
-                            <select class="form-control" name="edit_gender" id="edit_gender" required>
+                            <select style="width: 100% !important" class="form-control" name="edit_gender" id="edit_gender" required>
                                 <option value="" disabled selected>SELECT GENDER</option>
                                 <option value="FEMALE">FEMALE</option>
                                 <option value="MALE">MALE</option>
@@ -152,7 +152,7 @@ ob_start();
                     <div class="row">
                         <div class="col-md-6">
                             <label for="">Account Status</label>
-                            <select name="edit_status" id="edit_status" class="form-control">
+                            <select style="width: 100% !important" name="edit_status" id="edit_status" class="form-control">
                                 <option value="" disabled selected>SELECT STATUS</option>
                                 <option value="enable">ENABLE</option>
                                 <option value="disable">DISABLE</option>
@@ -271,6 +271,15 @@ $(document).ready(function() {
     // select2
     $('#filter_status').select2();
     $('#filter_gender').select2();
+    $('#add_gender').select2({
+        dropdownParent: $('#add_modal')
+    });
+    $('#edit_gender').select2({
+        dropdownParent: $('#edit_modal')
+    });
+    $('#edit_status').select2({
+        dropdownParent: $('#edit_modal')
+    });
 
     $('#filter_status, #filter_gender').bind("keyup change", function() {
         dataTable.draw();
@@ -522,10 +531,10 @@ $(document).ready(function() {
                 $('#edit_teacher_id').val(data.id);
                 $('#edit_f_name').val(data.f_name);
                 $('#edit_l_name').val(data.l_name);
-                $('#edit_gender').val(data.gender);
+                $('#edit_gender').val(data.gender).trigger('change');
                 $('#edit_mobile_no').val(data.mobile_no);
                 $('#edit_imagePreview').attr('src', './assets/img/avatar/' + data.avatar);
-                $('#edit_status').val(data.status);
+                $('#edit_status').val(data.status).trigger('change');
             }
         })
     })

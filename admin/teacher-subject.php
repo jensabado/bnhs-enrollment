@@ -295,14 +295,24 @@ $(document).ready(function() {
     $('#filter_subject').select2({
         placeholder: "SELECT GRADE LEVEL FIRST",
     });
-    $('#add_teacher_id').select2();
-    $('#add_grade_level_id').select2();
+    $('#add_teacher_id').select2({
+        dropdownParent: $('#add_modal')
+    });
+    $('#add_grade_level_id').select2({
+        dropdownParent: $('#add_modal')
+    });
     $('#add_subject_id').select2({
+        dropdownParent: $('#add_modal'),
         placeholder: "SELECT GRADE LEVEL FIRST",
     });
-    $('#edit_teacher_id').select2();
-    $('#edit_grade_level_id').select2();
+    $('#edit_teacher_id').select2({
+        dropdownParent: $('#edit_modal')
+    });
+    $('#edit_grade_level_id').select2({
+        dropdownParent: $('#edit_modal')
+    });
     $('#edit_subject_id').select2({
+        dropdownParent: $('#edit_modal'),
         placeholder: "SELECT GRADE LEVEL FIRST",
     });
 
@@ -362,6 +372,7 @@ $(document).ready(function() {
                 },
                 success: function(data) {
                     $('#add_subject_id').select2({
+                        dropdownParent: $('#add_modal'),
                         placeholder: "SELECT SUBJECT",
                     });
                     $('#add_subject_id').html(data);
@@ -391,6 +402,7 @@ $(document).ready(function() {
                 },
                 success: function(data) {
                     $('#edit_subject_id').select2({
+                        dropdownParent: $('#edit_modal'),
                         placeholder: "SELECT SUBJECT",
                     });
                     $('#edit_subject_id').html(data);
@@ -521,7 +533,8 @@ $(document).ready(function() {
                     },
                     success: function(res) {
                         $('#edit_subject_id').html(res);
-                        $('#edit_subject_id').val(data.subject_id).trigger('change');
+                        $('#edit_subject_id').val(data.subject_id).trigger(
+                            'change');
                     }
                 })
             }

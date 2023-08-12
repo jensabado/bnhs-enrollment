@@ -206,7 +206,7 @@ ob_start();
             </div>
             <div class="card-body">
                 <div class="row align-items-center justify-content-center mb-3">
-                    <div class="col-sm-3">
+                    <div class="col-sm-3 mb-3 mb-md-0">
                         <select class="form-control" name="filter_grade_level" id="filter_grade_level">
                             <option selected value="">SELECT GRADE LEVEL</option>
                             <?php
@@ -218,7 +218,7 @@ ob_start();
                             ?>
                         </select>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-3 mb-3 mb-md-0">
                         <select class="form-control" name="filter_subject" id="filter_subject" disabled>
                             <option value="" selected disabled>SELECT GRADE LEVEL FIRST</option>
                         </select>

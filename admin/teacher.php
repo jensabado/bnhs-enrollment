@@ -183,16 +183,23 @@ ob_start();
                     TEACHER</button>
             </div>
             <div class="card-body">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-sm-3">
-                        <select class="form-control mb-3" name="filter_status" id="filter_status">
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-sm-3 mb-3 mb-md-0">
+                        <select class="form-control" name="filter_status" id="filter_status">
                             <option selected value="">SELECT STATUS</option>
                             <option value="enable">ENABLE</option>
                             <option value="disable">DISABLE</option>
                         </select>
                     </div>
+                    <div class="col-sm-3 mb-3 mb-md-0">
+                        <select class="form-control" name="filter_gender" id="filter_gender">
+                            <option value="" selected disabled>SELECT GENDER</option>
+                            <option value="FEMALE">FEMALE</option>
+                            <option value="MALE">MALE</option>
+                        </select>
+                    </div>
                     <div class="col-sm-3">
-                        <button type="button" class="btn btn-warning mb-3" id="reset_filter">RESET FILTER</button>
+                        <button type="button" class="btn btn-warning" id="reset_filter">RESET FILTER</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -236,7 +243,8 @@ $(document).ready(function() {
             data: function(d) {
                 return $.extend({}, d, {
                     "teacher": true,
-                    "filter_status": $('#filter_status').val()
+                    "filter_status": $('#filter_status').val(),
+                    "filter_gender": $('#filter_gender').val()
                 })
             },
             error: function(xhr, error, code) {
@@ -260,7 +268,11 @@ $(document).ready(function() {
 
     dataTable.draw();
 
-    $('#filter_status').bind("keyup change", function() {
+    // select2
+    $('#filter_status').select2();
+    $('#filter_gender').select2();
+
+    $('#filter_status, #filter_gender').bind("keyup change", function() {
         dataTable.draw();
     })
 

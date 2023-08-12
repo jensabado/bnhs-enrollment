@@ -259,6 +259,8 @@ if (isset($_POST['get_room'])) {
         while ($row = $result->fetch_assoc()) {
             echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars(ucwords($row['room'])) . '</option>';
         }
+    } else {
+        echo '<option value="" selected disabled>NO RESULT</option>';
     }
 
     $stmt->close();
@@ -613,4 +615,169 @@ if (isset($_POST['delete_teacher'])) {
 
     mysqli_stmt_close($delete);
     mysqli_close($conn);
+}
+
+// teacher-subject.php
+// section.php
+if (isset($_POST['get_subject'])) {
+    $grade_level_id = $_POST['grade_level_id'];
+
+    $stmt = $conn->prepare("SELECT id, subject FROM tbl_subject WHERE grade_level_id = ? AND is_deleted = 'no'");
+    $stmt->bind_param("i", $grade_level_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows != 0) {
+        echo '<option value="">SELECT SUBJECT</option>';
+
+        while ($row = $result->fetch_assoc()) {
+            echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars(ucwords($row['subject'])) . '</option>';
+        }
+    } else {
+        echo '<option value="" selected disabled>NO RESULT</option>';
+    }
+
+    $stmt->close();
+}
+
+if(isset($_POST['add_teacher_subject'])) {
+    $teacher_id = $_POST['add_teacher_id'];
+    $subject_id = $_POST['add_subject_id'];
+    $grade_level_id = $_POST['add_grade_level_id'];
+
+    $validation_query = "SELECT * FROM tbl_teacher_subject WHERE teacher_id = ? AND grade_level_id = ? AND subject_id = ? AND is_deleted = 'no'";
+
+    $validation_statement = mysqli_prepare($conn, $validation_query);
+    mysqli_stmt_bind_param($validation_statement, "iii", $teacher_id, $grade_level_id, $subject_id);
+    mysqli_stmt_execute($validation_statement);
+    mysqli_stmt_store_result($validation_statement);
+
+    if(mysqli_stmt_num_rows($validation_statement) > 0) {
+        echo 'already exist';
+    } else {
+        $insert_query = "INSERT INTO tbl_teacher_subject (teacher_id, grade_level_id, subject_id) VALUES (?, ?, ?)";
+
+        $insert_statement = mysqli_prepare($conn, $insert_query);
+        mysqli_stmt_bind_param($insert_statement, "iii", $teacher_id, $grade_level_id, $subject_id);
+        $insert_result = mysqli_stmt_execute($insert_statement);
+
+        if($insert_result) {
+            echo 'success';
+        }
+    }
+
+    mysqli_stmt_close($validation_statement);
+    mysqli_stmt_close($insert_statement);
+}
+
+if (isset($_POST['get_teacher_subject_info'])) {
+    $id = $_POST['teacher_subject_id'];
+
+    $getTeacherSubjectInfoStmt = mysqli_prepare($conn, "SELECT id, teacher_id, grade_level_id, subject_id FROM tbl_teacher_subject WHERE id = ?");
+
+    mysqli_stmt_bind_param($getTeacherSubjectInfoStmt, "i", $id);
+
+    mysqli_stmt_execute($getTeacherSubjectInfoStmt);
+
+    $getTeacherSubjectInfoResult = mysqli_stmt_get_result($getTeacherSubjectInfoStmt);
+
+    $row = mysqli_fetch_assoc($getTeacherSubjectInfoResult);
+
+    if ($row) {
+        $result = array(
+            'id' => $row['id'],
+            'teacher_id' => $row['teacher_id'],
+            'grade_level_id' => $row['grade_level_id'],
+            'subject_id' => $row['subject_id'],
+        );
+
+        echo json_encode($result);
+    } else {
+        echo 'Teacher Subject not found';
+    }
+
+    mysqli_stmt_close($getTeacherSubjectInfoStmt);
+}
+
+if(isset($_POST['edit_teacher_subject'])) {
+    $id = $_POST['edit_teacher_subject_id'];
+    $teacher_id = $_POST['edit_teacher_id'];
+    $grade_level_id = $_POST['edit_grade_level_id'];
+    $subject_id = $_POST['edit_subject_id'];
+
+    $validation_query = "SELECT * FROM tbl_teacher_subject WHERE teacher_id = ? AND grade_level_id = ? AND subject_id = ? AND id != ?";
+
+    $validation_statement = mysqli_prepare($conn, $validation_query);
+    mysqli_stmt_bind_param($validation_statement, "iiii", $teacher_id, $grade_level_id, $subject_id, $id);
+    mysqli_stmt_execute($validation_statement);
+    mysqli_stmt_store_result($validation_statement);
+
+    if(mysqli_stmt_num_rows($validation_statement) > 0) {
+        echo 'already exist';
+    } else {
+        $update_query = "UPDATE tbl_teacher_subject SET teacher_id = ?, grade_level_id = ?, subject_id = ? WHERE id = ?";
+
+        $update_statement = mysqli_prepare($conn, $update_query);
+        mysqli_stmt_bind_param($update_statement, "iiii", $teacher_id, $grade_level_id, $subject_id, $id);
+        $update_result = mysqli_stmt_execute($update_statement);
+
+        if($update_result) {
+            echo 'success';
+        }
+    }
+
+    mysqli_stmt_close($validation_statement);
+    mysqli_stmt_close($update_statement);
+}
+
+if(isset($_POST['delete_teacher_subject'])) {
+    $id = $_POST['id'];
+
+    // Prepare the UPDATE query
+    $delete_query = "UPDATE tbl_teacher_subject SET is_deleted = 'yes' WHERE id = ?";
+
+    // Prepare and execute the UPDATE statement
+    $delete_statement = mysqli_prepare($conn, $delete_query);
+    mysqli_stmt_bind_param($delete_statement, "i", $id);
+    $delete_result = mysqli_stmt_execute($delete_statement);
+
+    if($delete_result) {
+        echo 'success';
+    }
+
+    // Close the prepared statement
+    mysqli_stmt_close($delete_statement);
+}
+if(isset($_POST['delete_teacher_subject'])) {
+    $id = $_POST['id'];
+
+    // Prepare the UPDATE query
+    $delete_query = "UPDATE tbl_teacher_subject SET is_deleted = 'yes' WHERE id = ?";
+
+    // Prepare and execute the UPDATE statement
+    $delete_statement = mysqli_prepare($conn, $delete_query);
+    mysqli_stmt_bind_param($delete_statement, "i", $id);
+    $delete_result = mysqli_stmt_execute($delete_statement);
+
+    if($delete_result) {
+        echo 'success';
+    }
+
+    // Close the prepared statement
+    mysqli_stmt_close($delete_statement);
+}
+if(isset($_POST['delete_teacher_subject'])) {
+    $id = $_POST['id'];
+
+    $delete_query = "UPDATE tbl_teacher_subject SET is_deleted = 'yes' WHERE id = ?";
+
+    $delete_statement = mysqli_prepare($conn, $delete_query);
+    mysqli_stmt_bind_param($delete_statement, "i", $id);
+    $delete_result = mysqli_stmt_execute($delete_statement);
+
+    if($delete_result) {
+        echo 'success';
+    }
+
+    mysqli_stmt_close($delete_statement);
 }

@@ -1,59 +1,94 @@
 <?php
 require_once('../database/connection.php');
-$page_title = 'Section';
+$page_title = 'Teacher Subject';
 ob_start();
 
 ?>
-<!-- START MODAL -->
 <div class="modal fade" tabindex="-1" role="dialog" id="add_modal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Room</h5>
+                <h5 class="modal-title">Add Teacher Subject</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" id="add_section_form">
+                <form action="" id="add_teacher_subject_form">
                     <div class="row mb-3">
                         <div class="col-12 d-flex flex-column">
-                            <label for="">Select Building</label>
-                            <select style="width: 100% !important;" class="form-control" name="add_section_building_id"
-                                id="add_section_building_id">
-                                <option disabled value="" selected>SELECT BUILDING</option>';
+                            <label for="">Teacher</label>
+                            <select style="width: 100% !important" class="form-control" name="add_teacher_id"
+                                id="add_teacher_id" required>
+                                <option disabled value="" selected>SELECT TEACHER</option>';
                                 <?php
-                                $get_building = mysqli_query($conn, "SELECT * FROM tbl_building WHERE is_deleted = 'no'");
-                                foreach ($get_building as $row) {
-                                    $id = htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8');
-                                    $building = htmlspecialchars($row['building'], ENT_QUOTES, 'UTF-8');
-                                    echo '<option value="' . $id . '">' . ucwords($building) . '</option>';
+                                $query = "SELECT id, f_name, l_name FROM tbl_teacher WHERE is_deleted = 'no' AND status = 'enable'";
+                                $get_teacher = mysqli_prepare($conn, $query);
+
+                                if ($get_teacher) {
+                                    mysqli_stmt_execute($get_teacher);
+
+                                    mysqli_stmt_bind_result($get_teacher, $id, $f_name, $l_name);
+
+                                    while (mysqli_stmt_fetch($get_teacher)) {
+                                        $id = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
+                                        $name = htmlspecialchars($f_name . ' ' . $l_name, ENT_QUOTES, 'UTF-8');
+                                        echo '<option value="' . $id . '">' . ucwords($name) . '</option>';
+                                    }
+
+                                    mysqli_stmt_close($get_teacher);
+                                } else {
+                                    echo '<option value="" selected disabled>NO RESULT</option>';
+                                }
+                                ?>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12 d-flex flex-column">
+                            <label for="">Grade Level</label>
+                            <select style="width: 100% !important" name="add_grade_level_id" id="add_grade_level_id"
+                                class="form-control" required>
+                                <option value="" selected disabled>SELECT GRADE LEVEL</option>
+                                <?php
+                                $query = "SELECT id, grade FROM tbl_grade_level";
+                                $get_grade_level = mysqli_prepare($conn, $query);
+
+                                if ($get_grade_level) {
+                                    mysqli_stmt_execute($get_grade_level);
+
+                                    mysqli_stmt_bind_result($get_grade_level, $id, $grade);
+
+                                    while (mysqli_stmt_fetch($get_grade_level)) {
+                                        $id = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
+                                        $grade_level = htmlspecialchars($grade, ENT_QUOTES, 'UTF-8');
+                                        echo '<option value="' . $id . '">' . ucwords($grade_level) . '</option>';
+                                    }
+
+                                    mysqli_stmt_close($get_grade_level);
+                                } else {
+                                    echo '<option value="" selected disabled>NO RESULT</option>';
                                 }
                                 ?>
                             </select>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-12 d-flex flex-column">
-                            <label for="">Select Room</label>
-                            <select style="width: 100% !important;" class="form-control" name="add_section_room_id"
-                                id="add_section_room_id" disabled required>
-                                <option value="">SELECT BUILDING FIRST</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="row">
-                        <div class="col-12">
-                            <label for="">Section Name</label>
-                            <input type="text" class="form-control" name="add_section_name" id="add_section_name"
-                                placeholder="Enter section name" required>
+                        <div class="col-12 d-flex flex-column">
+                            <label for="">Subject</label>
+                            <select style="width: 100% !important" name="add_subject_id" id="add_subject_id"
+                                class="form-control" disabled required>
+
+                            </select>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer bg-whitesmoke br">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="add_section_form" id="add_section_btn">Add</button>
+                <button type="submit" class="btn btn-primary" form="add_teacher_subject_form"
+                    id="add_teacher_subject_btn">Add</button>
                 <a href="#" class="btn disabled btn-primary btn-progress d-none spinner">Progress</a>
             </div>
         </div>
@@ -70,100 +105,126 @@ ob_start();
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" id="edit_section_form">
-                    <div class="row mb-3">
+                <form action="" id="edit_teacher_subject_form">
+                    <div class="row mb-3 d-none">
                         <div class="col-12">
-                            <label for="">Section ID</label>
-                            <input class="form-control" type="text" name="edit_section_id" id="edit_section_id"
-                                placeholder="Enter room id" required>
+                            <label for="">Teacher Subject ID</label>
+                            <input class="form-control" type="text" name="edit_teacher_subject_id"
+                                id="edit_teacher_subject_id" placeholder="Enter subject id" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-12">
-                            <label for="">Select Building</label>
-                            <select class="form-control" name="edit_section_building_id" id="edit_section_building_id">
-                                <option disabled value="" selected>SELECT BUILDING</option>';
+                        <div class="col-12 d-flex flex-column">
+                            <label for="">Teacher</label>
+                            <select style="width: 100% !important" class="form-control" name="edit_teacher_id"
+                                id="edit_teacher_id" required>
+                                <option disabled value="" selected>SELECT TEACHER</option>';
                                 <?php
-                                $get_building = mysqli_query($conn, "SELECT * FROM tbl_building WHERE is_deleted = 'no'");
-                                foreach ($get_building as $row) {
-                                    $id = htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8');
-                                    $building = htmlspecialchars($row['building'], ENT_QUOTES, 'UTF-8');
-                                    echo '<option value="' . $id . '">' . ucwords($building) . '</option>';
+                                $query = "SELECT id, f_name, l_name FROM tbl_teacher WHERE is_deleted = 'no' AND status = 'enable'";
+                                $get_teacher = mysqli_prepare($conn, $query);
+
+                                if ($get_teacher) {
+                                    mysqli_stmt_execute($get_teacher);
+
+                                    mysqli_stmt_bind_result($get_teacher, $id, $f_name, $l_name);
+
+                                    while (mysqli_stmt_fetch($get_teacher)) {
+                                        $id = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
+                                        $name = htmlspecialchars($f_name . ' ' . $l_name, ENT_QUOTES, 'UTF-8');
+                                        echo '<option value="' . $id . '">' . ucwords($name) . '</option>';
+                                    }
+
+                                    mysqli_stmt_close($get_teacher);
+                                } else {
+                                    echo '<option value="" selected disabled>NO RESULT</option>';
+                                }
+                                ?>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12 d-flex flex-column">
+                            <label for="">Grade Level</label>
+                            <select style="width: 100% !important" name="edit_grade_level_id" id="edit_grade_level_id"
+                                class="form-control" required>
+                                <option value="" selected disabled>SELECT GRADE LEVEL</option>
+                                <?php
+                                $query = "SELECT id, grade FROM tbl_grade_level";
+                                $get_grade_level = mysqli_prepare($conn, $query);
+
+                                if ($get_grade_level) {
+                                    mysqli_stmt_execute($get_grade_level);
+
+                                    mysqli_stmt_bind_result($get_grade_level, $id, $grade);
+
+                                    while (mysqli_stmt_fetch($get_grade_level)) {
+                                        $id = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
+                                        $grade_level = htmlspecialchars($grade, ENT_QUOTES, 'UTF-8');
+                                        echo '<option value="' . $id . '">' . ucwords($grade_level) . '</option>';
+                                    }
+
+                                    mysqli_stmt_close($get_grade_level);
+                                } else {
+                                    echo '<option value="" selected disabled>NO RESULT</option>';
                                 }
                                 ?>
                             </select>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <label for="">Select Room</label>
-                            <select class="form-control" name="edit_section_room_id" id="edit_section_room_id" disabled
-                                required>
-                                <option value="">SELECT BUILDING FIRST</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="row">
-                        <div class="col-12">
-                            <label for="">Section Name</label>
-                            <input type="text" class="form-control" name="edit_section_name" id="edit_section_name"
-                                placeholder="Enter section name" required>
+                        <div class="col-12 d-flex flex-column">
+                            <label for="">Subject</label>
+                            <select style="width: 100% !important" name="edit_subject_id" id="edit_subject_id"
+                                class="form-control" disabled required>
+
+                            </select>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer bg-whitesmoke br">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="edit_section_form" id="edit_section_btn">Save
+                <button type="submit" class="btn btn-primary" form="edit_teacher_subject_form" id="edit_room_btn">Save
                     changes</button>
                 <a href="#" class="btn disabled btn-primary btn-progress d-none spinner">Progress</a>
             </div>
         </div>
     </div>
 </div>
-<!-- END MODAL -->
 
 <section class="section">
     <div class="section-header">
-        <h1>Section</h1>
+        <h1>Teacher Subject</h1>
     </div>
 
     <div class="section-body">
         <div class="card">
             <div class="card-header">
                 <button class="btn btn-primary" id="add_building"><i class="fa-solid fa-plus pr-1"></i> ADD
-                    SECTION</button>
+                    TEACHER SUBJECT</button>
             </div>
             <div class="card-body">
                 <div class="row align-items-center justify-content-center mb-3">
-                    <div class="col-sm-3  mb-3 mb-md-0">
-                        <select class="form-control" name="filter_building" id="filter_building">
-                            <option selected value="">SELECT BUILDING</option>
+                    <div class="col-sm-3">
+                        <select class="form-control" name="filter_grade_level" id="filter_grade_level">
+                            <option selected value="">SELECT GRADE LEVEL</option>
                             <?php
-                            $stmt = $conn->prepare("SELECT id, building FROM tbl_building WHERE is_deleted = ?");
-                            $isDeleted = 'no';
-                            $stmt->bind_param("s", $isDeleted);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
+                            $get_grade_level = mysqli_query($conn, "SELECT * FROM tbl_grade_level");
                             
-                            while ($fetch_building = $result->fetch_assoc()) {
-                                $id = $fetch_building['id'];
-                                $building_name = ucwords($fetch_building['building']);
-                            
-                                echo '<option value="' . htmlspecialchars($id) . '">' . htmlspecialchars($building_name) . '</option>';
+                            foreach($get_grade_level as $grade_level_result) {
+                            echo '<option value="'.$grade_level_result['id'].'">'.ucwords($grade_level_result['grade']).'</option>';
                             }
-                            
-                            $stmt->close();                    
                             ?>
                         </select>
                     </div>
-                    <div class="col-sm-3 mb-3 mb-md-0">
-                        <select class="form-control" name="filter_room" id="filter_room" disabled>
-                            <option selected value="">SELECT BUILDING FIRST</option>
+                    <div class="col-sm-3">
+                        <select class="form-control" name="filter_subject" id="filter_subject" disabled>
+                            <option value="" selected disabled>SELECT GRADE LEVEL FIRST</option>
                         </select>
                     </div>
                     <div class="col-sm-3">
-                        <button type="button" class="btn btn-warning mb-3" id="reset_filter">RESET FILTER</button>
+                        <button type="button" class="btn btn-warning" id="reset_filter">RESET FILTER</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -171,9 +232,9 @@ ob_start();
                         <thead class="thead-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Building Name</th>
-                                <th scope="col">Room Name</th>
-                                <th scope="col">Section Name</th>
+                                <th scope="col">Teacher Name</th>
+                                <th scope="col">Grade Level Subject</th>
+                                <th scope="col">Subject Handle</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -185,6 +246,7 @@ ob_start();
 </section>
 
 <?php
+
 $content = ob_get_clean();
 ob_start();
 ?>
@@ -203,10 +265,13 @@ $(document).ready(function() {
             type: "POST",
             data: function(d) {
                 return $.extend({}, d, {
-                    "section": true,
-                    "filter_building": $('#filter_building').val(),
-                    "filter_room": $('#filter_room').val(),
+                    "teacher_subject": true,
+                    "filter_grade_level": $('#filter_grade_level').val(),
+                    "filter_subject": $('#filter_subject').val()
                 })
+            },
+            error: function(xhr, error, code) {
+                console.log(xhr, code);
             }
         },
         "order": [
@@ -226,37 +291,109 @@ $(document).ready(function() {
 
     dataTable.draw();
 
-    // select2
-    $('#filter_building').select2();
-    $('#filter_room').select2();
-    $('#add_section_building_id').select2();
-    $('#add_section_room_id').select2({
-        placeholder: "SELECT BUILDING FIRST",
+    $('#filter_grade_level').select2();
+    $('#filter_subject').select2({
+        placeholder: "SELECT GRADE LEVEL FIRST",
+    });
+    $('#add_teacher_id').select2();
+    $('#add_grade_level_id').select2();
+    $('#add_subject_id').select2({
+        placeholder: "SELECT GRADE LEVEL FIRST",
+    });
+    $('#edit_teacher_id').select2();
+    $('#edit_grade_level_id').select2();
+    $('#edit_subject_id').select2({
+        placeholder: "SELECT GRADE LEVEL FIRST",
     });
 
-    $('#filter_building, #filter_room').bind("keyup change", function() {
+    $('#filter_grade_level, #filter_subject').bind("keyup change", function() {
         dataTable.draw();
     })
 
     // filter onchange
-    $('#filter_building').change(function() {
-        let building_id = $(this).val();
+    $('#filter_grade_level').change(function() {
+        let grade_level_id = $(this).val();
 
-        if (building_id == '') {
-            $('#filter_room').attr('disabled', true);
-            $('#filter_room').val('').trigger('change');
+        if (grade_level_id == '') {
+            $('#filter_subject').select2({
+                placeholder: "SELECT GRADE LEVEL FIRST",
+            });
+            $('#filter_subject').attr('disabled', true);
+            $('#filter_subject').val('').trigger('change');
         } else {
-            $('#filter_room').attr('disabled', false);
+            $('#filter_subject').attr('disabled', false);
 
             $.ajax({
                 url: "./controller/backend.php",
                 type: "POST",
                 data: {
-                    building_id: building_id,
-                    get_room: true,
+                    grade_level_id: grade_level_id,
+                    get_subject: true,
                 },
                 success: function(data) {
-                    $('#filter_room').html(data);
+                    $('#filter_subject').select2({
+                        placeholder: "SELECT SUBJECT",
+                    });
+                    $('#filter_subject').html(data);
+                }
+            })
+        }
+    })
+
+    // modal select onchange 
+    $('#add_grade_level_id').change(function() {
+        let grade_level_id = $(this).val();
+
+        if (grade_level_id == '') {
+            $('#add_subject_id').select2({
+                placeholder: "SELECT GRADE LEVEL FIRST",
+            });
+            $('#add_subject_id').attr('disabled', true);
+            $('#add_subject_id').val('').trigger('change');
+        } else {
+            $('#add_subject_id').attr('disabled', false);
+
+            $.ajax({
+                url: "./controller/backend.php",
+                type: "POST",
+                data: {
+                    grade_level_id: grade_level_id,
+                    get_subject: true,
+                },
+                success: function(data) {
+                    $('#add_subject_id').select2({
+                        placeholder: "SELECT SUBJECT",
+                    });
+                    $('#add_subject_id').html(data);
+                }
+            })
+        }
+    })
+
+    $('#edit_grade_level_id').change(function() {
+        let grade_level_id = $(this).val();
+
+        if (grade_level_id == '') {
+            $('#edit_subject_id').select2({
+                placeholder: "SELECT GRADE LEVEL FIRST",
+            });
+            $('#edit_subject_id').attr('disabled', true);
+            $('#edit_subject_id').val('').trigger('change');
+        } else {
+            $('#edit_subject_id').attr('disabled', false);
+
+            $.ajax({
+                url: "./controller/backend.php",
+                type: "POST",
+                data: {
+                    grade_level_id: grade_level_id,
+                    get_subject: true,
+                },
+                success: function(data) {
+                    $('#edit_subject_id').select2({
+                        placeholder: "SELECT SUBJECT",
+                    });
+                    $('#edit_subject_id').html(data);
                 }
             })
         }
@@ -266,58 +403,11 @@ $(document).ready(function() {
     $('#reset_filter').on('click', function(e) {
         e.preventDefault();
 
-        $('#filter_building').val('').trigger("change");
-        $('#filter_room').val('').trigger("change");
-    })
-
-    // modal onchange
-    $('#add_section_building_id').change(function() {
-        let building_id = $(this).val();
-
-        if (building_id == '') {
-            $('#add_section_room_id').attr('disabled', true);
-            $('#add_section_room_id').val('');
-        } else {
-            $('#add_section_room_id').attr('disabled', false);
-
-            $.ajax({
-                url: "./controller/backend.php",
-                type: "POST",
-                data: {
-                    building_id: building_id,
-                    get_room: true,
-                },
-                success: function(data) {
-                    $('#add_section_room_id').select2({
-                        placeholder: "SELECT BUILDING FIRST",
-                    });
-                    $('#add_section_room_id').html(data);
-                }
-            })
-        }
-    })
-
-    $('#edit_section_building_id').change(function() {
-        let building_id = $(this).val();
-
-        if (building_id == '') {
-            $('#edit_section_room_id').attr('disabled', true);
-            $('#edit_section_room_id').val('');
-        } else {
-            $('#edit_section_room_id').attr('disabled', false);
-
-            $.ajax({
-                url: "./controller/backend.php",
-                type: "POST",
-                data: {
-                    building_id: building_id,
-                    get_room: true,
-                },
-                success: function(data) {
-                    $('#edit_section_room_id').html(data);
-                }
-            })
-        }
+        $('#filter_subject').select2({
+            placeholder: "SELECT GRADE LEVEL FIRST",
+        });
+        $('#filter_grade_level').val('').trigger("change");
+        $('#filter_subject').val('').trigger("change");
     })
 
     // modal function
@@ -328,11 +418,11 @@ $(document).ready(function() {
     })
 
     // - submit add modal
-    $(document).on('submit', '#add_section_form', function(e) {
+    $(document).on('submit', '#add_teacher_subject_form', function(e) {
         e.preventDefault();
 
         let form = new FormData(this);
-        form.append('add_section', true);
+        form.append('add_teacher_subject', true);
 
         $.ajax({
             type: "POST",
@@ -342,11 +432,11 @@ $(document).ready(function() {
             contentType: false,
             cache: false,
             beforeSend: function() {
-                $('#add_section_btn').addClass('d-none');
+                $('#add_teacher_subject_btn').addClass('d-none');
                 $('.spinner').removeClass('d-none');
             },
             complete: function() {
-                $('#add_section_btn').removeClass('d-none');
+                $('#add_teacher_subject_btn').removeClass('d-none');
                 $('.spinner').addClass('d-none');
             },
             success: function(response) {
@@ -357,7 +447,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Section added successfully!',
+                        text: 'Teacher Subject added successfully!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -370,7 +460,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Sorry!',
-                        text: 'Section already exist!',
+                        text: 'Teacher Subject already exist!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -401,10 +491,10 @@ $(document).ready(function() {
     $(document).on('click', '#get_edit', function(e) {
         e.preventDefault();
 
-        let section_id = $(this).data('id');
+        let teacher_subject_id = $(this).data('id');
         let form = new FormData();
-        form.append('get_section_info', true);
-        form.append('section_id', section_id);
+        form.append('get_teacher_subject_info', true);
+        form.append('teacher_subject_id', teacher_subject_id);
 
         $.ajax({
             type: "POST",
@@ -414,25 +504,24 @@ $(document).ready(function() {
             contentType: false,
             cache: false,
             success: function(response) {
+                console.log(response);
                 $('#edit_modal').modal('show');
                 let data = JSON.parse(response);
-                $('#edit_section_id').val(data.id);
-                $('#edit_section_building_id').val(data.building_id);
-                $('#edit_section_room_id').val(data.room_id);
-                $('#edit_section_name').val(data.section);
-
-                $('#edit_section_room_id').attr('disabled', false);
+                $('#edit_teacher_subject_id').val(data.id);
+                $('#edit_teacher_id').val(data.teacher_id).trigger('change');
+                $('#edit_grade_level_id').val(data.grade_level_id).trigger('change');
+                $('#edit_subject_id').attr('disabled', false);
 
                 $.ajax({
                     url: "./controller/backend.php",
                     type: "POST",
                     data: {
-                        building_id: data.building_id,
-                        get_room: true,
+                        grade_level_id: data.grade_level_id,
+                        get_subject: true,
                     },
-                    success: function(response) {
-                        $('#edit_section_room_id').html(response);
-                        $('#edit_section_room_id').val(data.room_id);
+                    success: function(res) {
+                        $('#edit_subject_id').html(res);
+                        $('#edit_subject_id').val(data.subject_id).trigger('change');
                     }
                 })
             }
@@ -440,11 +529,11 @@ $(document).ready(function() {
     })
 
     // submit edit building
-    $(document).on('submit', '#edit_section_form', function(e) {
+    $(document).on('submit', '#edit_teacher_subject_form', function(e) {
         e.preventDefault();
 
         let form = new FormData(this);
-        form.append('edit_section', true);
+        form.append('edit_teacher_subject', true);
 
         $.ajax({
             type: "POST",
@@ -454,11 +543,11 @@ $(document).ready(function() {
             contentType: false,
             cache: false,
             beforeSend: function() {
-                $('#edit_section_btn').addClass('d-none');
+                $('#edit_teacher_subject_btn').addClass('d-none');
                 $('.spinner').removeClass('d-none');
             },
             complete: function() {
-                $('#edit_section_btn').removeClass('d-none');
+                $('#edit_teacher_subject_btn').removeClass('d-none');
                 $('.spinner').addClass('d-none');
             },
             success: function(response) {
@@ -469,7 +558,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Section updated successfully!',
+                        text: 'Teacher Subject updated successfully!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -482,7 +571,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Sorry!',
-                        text: 'Section already exist!',
+                        text: 'Teacher Subject already exist!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,
@@ -530,7 +619,7 @@ $(document).ready(function() {
             if (result.isConfirmed) {
                 let form = new FormData();
                 form.append('id', id);
-                form.append('delete_section', true);
+                form.append('delete_teacher_subject', true);
 
                 $.ajax({
                     type: "POST",
@@ -578,8 +667,9 @@ $(document).ready(function() {
     // hide modal reset 
     $('#add_modal').on('hidden.bs.modal', function() {
         $(this).find('form').trigger('reset');
-        $('#add_section_building_id').val('').trigger('change');
-        $('#add_section_room_id').val('').trigger('change');
+        $('#add_teacher_id').val('').trigger('change');
+        $('#add_grade_level_id').val('').trigger('change');
+        $('#add_subject_id').val('').trigger('change');
     });
 
     $('#edit_modal').on('hidden.bs.modal', function() {

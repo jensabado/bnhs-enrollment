@@ -317,6 +317,10 @@ if (isset($_POST['teacher'])) {
         $query .= 'AND status = "'.$_POST['filter_status'].'"';
     }
 
+    if($_POST['filter_gender'] != '') {
+        $query .= 'AND gender = "'.$_POST['filter_gender'].'"';
+    }
+
     if (isset($_POST['search']['value'])) {
         $query .= '
         AND (id LIKE "%' . $_POST['search']['value'] . '%"
@@ -378,6 +382,99 @@ if (isset($_POST['teacher'])) {
     function count_all_data($connect)
     {
         $query = "SELECT * FROM tbl_teacher WHERE is_deleted = 'no'";
+        $statement = $connect->prepare($query);
+        $statement->execute();
+        return $statement->rowCount();
+    }
+
+    $output = array(
+        'draw' => intval($_POST['draw']),
+        'recordsTotal' => count_all_data($connect),
+        'recordsFiltered' => $number_filter_row,
+        'data' => $data,
+    );
+
+    echo json_encode($output);
+}
+
+if (isset($_POST['teacher_subject'])) {
+    $column = array('id', 'name', 'grade_level', 'subject');
+
+    $query = "SELECT tbl_teacher_subject.id, tbl_teacher.f_name, tbl_teacher.l_name, tbl_grade_level.grade, tbl_subject.`subject`
+    FROM tbl_teacher_subject
+    LEFT JOIN tbl_teacher
+    ON tbl_teacher_subject.teacher_id = tbl_teacher.id
+    LEFT JOIN tbl_subject
+    ON tbl_teacher_subject.subject_id = tbl_subject.id
+    LEFT JOIN tbl_grade_level
+    ON tbl_subject.grade_level_id = tbl_grade_level.id
+    WHERE tbl_teacher_subject.is_deleted = 'no'";
+
+    if($_POST['filter_grade_level'] != '') {
+        $query .= 'AND tbl_subject.grade_level_id = "'.$_POST['filter_grade_level'].'"';
+    }
+
+    if($_POST['filter_subject'] != '') {
+        $query .= 'AND tbl_subject.id = "'.$_POST['filter_subject'].'"';
+    }
+
+    if (isset($_POST['search']['value'])) {
+        $query .= '
+        AND (tbl_teacher_subject.id LIKE "%' . $_POST['search']['value'] . '%"
+        OR tbl_teacher.f_name LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_teacher.l_name LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_subject.subject LIKE "%' . $_POST['search']['value'] . '%" )
+        ';
+    }
+
+    if (isset($_POST['order'])) {
+        $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+    } else {
+        $query .= 'ORDER BY id DESC ';
+    }
+
+    $query1 = '';
+
+    if ($_POST['length'] != -1) {
+        $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    }
+
+    $statement = $connect->prepare($query);
+
+    $statement->execute();
+
+    $number_filter_row = $statement->rowCount();
+
+    $statement = $connect->prepare($query . $query1);
+
+    $statement->execute();
+
+    $result = $statement->fetchAll();
+
+    $data = array();
+
+    foreach ($result as $row) {
+        $sub_array = array();
+
+        $sub_array[] = '#' . $row['id'];
+        $sub_array[] = ucwords($row['f_name'] . ' ' . $row['l_name']);
+        $sub_array[] = ucwords($row['grade']);
+        $sub_array[] = ucwords($row['subject']);
+        $sub_array[] = '<div class="d-flex flex-row align-items-center gap-2" style="gap: 5px;"> <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-regular fa-pen-to-square"></i></button> <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash"></i></button></div>';
+        $data[] = $sub_array;
+    }
+
+    function count_all_data($connect)
+    {
+        $query = "SELECT tbl_teacher_subject.id, tbl_teacher.f_name, tbl_teacher.l_name, tbl_grade_level.grade, tbl_subject.`subject`
+        FROM tbl_teacher_subject
+        LEFT JOIN tbl_teacher
+        ON tbl_teacher_subject.teacher_id = tbl_teacher.id
+        LEFT JOIN tbl_subject
+        ON tbl_teacher_subject.subject_id = tbl_subject.id
+        LEFT JOIN tbl_grade_level
+        ON tbl_subject.grade_level_id = tbl_grade_level.id
+        WHERE tbl_teacher_subject.is_deleted = 'no'";
         $statement = $connect->prepare($query);
         $statement->execute();
         return $statement->rowCount();

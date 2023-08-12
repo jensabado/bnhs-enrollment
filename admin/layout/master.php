@@ -39,6 +39,7 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
     <link rel="stylesheet" href="assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
@@ -153,6 +154,8 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
     <script src="assets/modules/datatables/Select-1.2.4/js/dataTables.select.min.js"></script>
     <script src="assets/modules/jquery-ui/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
     <!-- Page Specific JS File -->
     <script src="assets/js/page/index.js"></script>

@@ -133,9 +133,9 @@ ob_start();
                     SUBJECT</button>
             </div>
             <div class="card-body">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-sm-3">
-                        <select class="form-control mb-3" name="filter_grade_level" id="filter_grade_level">
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-sm-3 mb-3 mb-md-0">
+                        <select class="form-control" name="filter_grade_level" id="filter_grade_level">
                             <option selected value="">SELECT GRADE LEVEL</option>
                             <?php
                             $stmt = $conn->prepare("SELECT id, grade FROM tbl_grade_level WHERE is_deleted = ?");
@@ -156,7 +156,7 @@ ob_start();
                         </select>
                     </div>
                     <div class="col-sm-3">
-                        <button type="button" class="btn btn-warning mb-3" id="reset_filter">RESET FILTER</button>
+                        <button type="button" class="btn btn-warning" id="reset_filter">RESET FILTER</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -221,6 +221,9 @@ $(document).ready(function() {
 
     // filter
     dataTable.draw();
+
+    // select2
+    $('#filter_grade_level').select2();
 
     $('#filter_grade_level').bind("keyup change", function() {
         dataTable.draw();

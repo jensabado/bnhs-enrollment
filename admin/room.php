@@ -121,9 +121,9 @@ ob_start();
                     ROOM</button>
             </div>
             <div class="card-body">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-sm-3">
-                        <select class="form-control mb-3" name="filter_building"
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-sm-3 mb-3 mb-md-0">
+                        <select class="form-control" name="filter_building"
                             id="filter_building">
                             <option selected value="">SELECT BUILDING</option>
                             <?php
@@ -145,7 +145,7 @@ ob_start();
                         </select>
                     </div>
                     <div class="col-sm-3">
-                        <button type="button" class="btn btn-warning mb-3" id="reset_filter">RESET FILTER</button>
+                        <button type="button" class="btn btn-warning" id="reset_filter">RESET FILTER</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -210,6 +210,9 @@ $(document).ready(function() {
 
     dataTable.draw();
 
+    // select 2
+    $('#filter_building').select2();
+
     $('#filter_building').bind("keyup change", function() {
         dataTable.draw();
     })
@@ -271,7 +274,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Sorry!',
-                        text: 'Building already exist!',
+                        text: 'Room already exist!',
                         iconColor: '#274c43',
                         confirmButtonColor: '#274c43',
                         showConfirmButton: false,

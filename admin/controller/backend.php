@@ -115,20 +115,16 @@ if (isset($_POST['edit_building'])) {
 if (isset($_POST['delete_building'])) {
     $id = $_POST['id'];
 
-    // Prepare the UPDATE query using a prepared statement
     $deleteStmt = mysqli_prepare($conn, "UPDATE tbl_building SET is_deleted = 'yes' WHERE id = ?");
 
-    // Bind parameter
     mysqli_stmt_bind_param($deleteStmt, "i", $id);
 
-    // Execute the prepared statement
     $delete = mysqli_stmt_execute($deleteStmt);
 
     if ($delete) {
         echo 'success';
     }
 
-    // Close the prepared statement
     mysqli_stmt_close($deleteStmt);
 }
 
@@ -857,4 +853,177 @@ if(isset($_POST['delete_classroom_advisory'])) {
     }
 
     mysqli_stmt_close($delete_statement);
+}
+
+// classroom-schedule.php
+if(isset($_POST['get_teacher'])) {
+    $id = $_POST['subject_id'];
+
+    $stmt = mysqli_prepare($conn, "SELECT tbl_teacher.id, tbl_teacher.f_name, tbl_teacher.l_name
+        FROM tbl_teacher_subject
+        LEFT JOIN tbl_teacher
+        ON tbl_teacher_subject.teacher_id = tbl_teacher.id
+        WHERE tbl_teacher_subject.subject_id = ?");
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+
+    if(mysqli_num_rows($result) < 1) {
+        echo '<option value="" selected disabled>NO RESULT</option>';
+    } else {
+        echo '<option value="">SELECT TEACHER</option>';
+        while($row = mysqli_fetch_assoc($result)) {
+            echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars(ucwords($row['f_name'] . ' ' . $row['l_name'])) . '</option>';
+        }
+    }
+
+    mysqli_stmt_close($stmt);
+}
+
+if (isset($_POST['get_subject_cs'])) {
+    $section_id = $_POST['section_id'];
+    $grade_level_id = 0;
+
+    $stmt = $conn->prepare("SELECT grade_level_id FROM tbl_section WHERE id = ?");
+    $stmt->bind_param("i", $section_id); 
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $fetch_grade_level = $result->fetch_assoc();
+        $grade_level_id = $fetch_grade_level['grade_level_id'];
+    }
+
+    $stmt->close();
+
+
+    $stmt = $conn->prepare("SELECT id, subject FROM tbl_subject WHERE grade_level_id = ? AND is_deleted = 'no'");
+    $stmt->bind_param("i", $grade_level_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows != 0) {
+        echo '<option value="">SELECT SUBJECT</option>';
+
+        while ($row = $result->fetch_assoc()) {
+            echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars(ucwords($row['subject'])) . '</option>';
+        }
+    } else {
+        echo '<option value="" selected disabled>NO RESULT</option>';
+    }
+
+    $stmt->close();
+}
+
+if(isset($_POST['add_class_sched'])) {
+    $section_id = $_POST['add_section_id'];
+    $start_time = $_POST['add_start_time'];
+    $end_time = $_POST['add_end_time'];
+    $day_id = $_POST['add_day_id'];
+    $subject_id = $_POST['add_subject_id'];
+    $teacher_id = $_POST['add_teacher_id'];
+
+    $validation_query = "SELECT * FROM tbl_classroom_schedule WHERE section_id = ? AND day_id = ? AND subject_id = ? AND teacher_id = ? AND is_deleted = 'no'";
+    $validation_stmt = mysqli_prepare($conn, $validation_query);
+    mysqli_stmt_bind_param($validation_stmt, "iiii", $section_id, $day_id, $subject_id, $teacher_id);
+    mysqli_stmt_execute($validation_stmt);
+    $validation_result = mysqli_stmt_get_result($validation_stmt);
+
+    if(mysqli_num_rows($validation_result) > 0) {
+        echo 'already exist';
+    } else {
+        $insert_query = "INSERT INTO tbl_classroom_schedule (section_id, teacher_id, subject_id, day_id, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?)";
+        $insert_stmt = mysqli_prepare($conn, $insert_query);
+        mysqli_stmt_bind_param($insert_stmt, "iiisss", $section_id, $teacher_id, $subject_id, $day_id, $start_time, $end_time);
+        $insert_result = mysqli_stmt_execute($insert_stmt);
+
+        if($insert_result) {
+            echo 'success';
+        }
+    }
+
+    mysqli_stmt_close($validation_stmt);
+    mysqli_stmt_close($insert_stmt);
+}
+
+if(isset($_POST['get_class_sched_info'])) {
+    $id = $_POST['class_sched_id'];
+
+    // Using prepared statement to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM tbl_classroom_schedule WHERE id = ?");
+    $stmt->bind_param("i", $id); // "i" represents an integer parameter
+
+    $stmt->execute();
+    $queryResult = $stmt->get_result();
+
+    $result = array();
+
+    while ($row = $queryResult->fetch_assoc()) {
+        $result['id'] = $row['id'];
+        $result['section_id'] = $row['section_id'];
+        $result['start_time'] = $row['start_time'];
+        $result['end_time'] = $row['end_time'];
+        $result['day_id'] = $row['day_id'];
+        $result['subject_id'] = $row['subject_id'];
+        $result['teacher_id'] = $row['teacher_id'];
+    }
+
+    echo json_encode($result);
+
+    $stmt->close();
+}
+
+if(isset($_POST['edit_class_sched'])) {
+    $class_sched_id = $_POST['edit_class_sched_id'];
+    $section_id = $_POST['edit_section_id'];
+    $start_time = $_POST['edit_start_time'];
+    $end_time = $_POST['edit_end_time'];
+    $day_id = $_POST['edit_day_id'];
+    $subject_id = $_POST['edit_subject_id'];
+    $teacher_id = $_POST['edit_teacher_id'];
+
+    $validation_query = "SELECT * FROM tbl_classroom_schedule WHERE section_id = ? AND day_id = ? AND subject_id = ? AND teacher_id = ? AND id != ? AND is_deleted = 'no'";
+    $validation_stmt = mysqli_prepare($conn, $validation_query);
+    mysqli_stmt_bind_param($validation_stmt, "iiiii", $section_id, $day_id, $subject_id, $teacher_id, $class_sched_id);
+    mysqli_stmt_execute($validation_stmt);
+    $validation_result = mysqli_stmt_get_result($validation_stmt);
+
+    if(mysqli_num_rows($validation_result) > 0) {
+        echo 'already exist';
+    } else {
+        $stmt = $conn->prepare("UPDATE tbl_classroom_schedule SET section_id = ?, teacher_id = ?, subject_id = ?, day_id = ?, start_time = ?, end_time = ? WHERE id = ?");
+        $stmt->bind_param("iiisssi", $section_id, $teacher_id, $subject_id, $day_id, $start_time, $end_time, $class_sched_id);
+
+        $result = $stmt->execute();
+
+        if ($result) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+
+    }
+
+    mysqli_stmt_close($validation_stmt);
+    mysqli_stmt_close($stmt);
+}
+
+if (isset($_POST['delete_classroom_schedule'])) {
+    $id = $_POST['id'];
+
+    $deleteStmt = mysqli_prepare($conn, "UPDATE tbl_classroom_schedule SET is_deleted = 'yes' WHERE id = ?");
+
+    mysqli_stmt_bind_param($deleteStmt, "i", $id);
+
+    $delete = mysqli_stmt_execute($deleteStmt);
+
+    if ($delete) {
+        echo 'success';
+    }
+
+    mysqli_stmt_close($deleteStmt);
 }

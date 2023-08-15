@@ -378,7 +378,7 @@ $(document).ready(function() {
                 success: function(data) {
                     $('#add_section_room_id').select2({
                         dropdownParent: $('#add_modal'),
-                        placeholder: "SELECT BUILDING FIRST",
+                        placeholder: "SELECT ROOM",
                     });
                     $('#add_section_room_id').html(data);
                 }
@@ -403,6 +403,10 @@ $(document).ready(function() {
                     get_room: true,
                 },
                 success: function(data) {
+                    $('#edit_section_room_id').select2({
+                        dropdownParent: $('#edit_modal'),
+                        placeholder: "SELECT ROOM",
+                    });
                     $('#edit_section_room_id').html(data);
                 }
             })

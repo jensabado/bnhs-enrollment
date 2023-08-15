@@ -28,6 +28,8 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="assets/modules/bootstrap/css/bootstrap.min.css">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
     <!-- CSS Libraries -->
@@ -117,6 +119,9 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
                                 <span>Teacher Subject</span></a></li>
                         <li><a class="nav-link" href="classroom-advisory"><i class="fas fa-solid fa-person-shelter"></i>
                                 <span>Classroom Advisory</span></a></li>
+                        <li><a class="nav-link" href="classroom-schedule"><i
+                                    class="fas fa-regular fa-calendar-days"></i>
+                                <span>Classroom Schedule</span></a></li>
                         <li class="menu-header">Stisla</li>
                         <li class="dropdown">
                             <a href="#" class="nav-link has-dropdown"><i class="fas fa-th-large"></i>
@@ -141,6 +146,8 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
     <script src="assets/modules/popper.js"></script>
     <script src="assets/modules/tooltip.js"></script>
     <script src="assets/modules/bootstrap/js/bootstrap.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script> -->
+
     <script src="assets/modules/nicescroll/jquery.nicescroll.min.js"></script>
     <script src="assets/modules/moment.min.js"></script>
     <script src="assets/js/stisla.js"></script>

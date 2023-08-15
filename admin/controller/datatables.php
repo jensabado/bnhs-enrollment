@@ -590,4 +590,108 @@ if (isset($_POST['classroom_advisory'])) {
 
     echo json_encode($output);
 }
+
+if (isset($_POST['class_sched'])) {
+    $column = array('id', 'grade_section', 'time', 'day', 'subject', 'teacher');
+
+    $query = "SELECT tbl_classroom_schedule.id, tbl_grade_level.grade, tbl_section.section, tbl_classroom_schedule.start_time, tbl_classroom_schedule.end_time, tbl_days.`name`, tbl_subject.`subject`, tbl_teacher.f_name, tbl_teacher.l_name
+    FROM tbl_classroom_schedule
+    LEFT JOIN tbl_section
+    ON tbl_classroom_schedule.section_id = tbl_section.id
+    LEFT JOIN tbl_grade_level
+    ON tbl_section.grade_level_id = tbl_grade_level.id
+    LEFT JOIN tbl_days
+    ON tbl_classroom_schedule.day_id = tbl_days.id
+    LEFT JOIN tbl_subject
+    ON tbl_classroom_schedule.subject_id = tbl_subject.id
+    LEFT JOIN tbl_teacher
+    ON tbl_classroom_schedule.teacher_id = tbl_teacher.id
+    WHERE tbl_classroom_schedule.is_deleted = 'no'";
+
+    if($_POST['filter_grade_section'] != '') {
+        $query .= 'AND tbl_section.id = "'.$_POST['filter_grade_section'].'"';
+    }
+
+    if (isset($_POST['search']['value'])) {
+        $query .= '
+        AND (tbl_classroom_schedule.id LIKE "%' . $_POST['search']['value'] . '%"
+        OR tbl_grade_level.grade LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_section.section LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_classroom_schedule.start_time LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_classroom_schedule.end_time LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_days.`name` LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_subject.`subject` LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_teacher.f_name LIKE "%' . $_POST['search']['value'] . '%" 
+        OR tbl_teacher.l_name LIKE "%' . $_POST['search']['value'] . '%" )
+        ';
+    }
+
+    if (isset($_POST['order'])) {
+        $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+    } else {
+        $query .= 'ORDER BY id DESC ';
+    }
+
+    $query1 = '';
+
+    if ($_POST['length'] != -1) {
+        $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    }
+
+    $statement = $connect->prepare($query);
+
+    $statement->execute();
+
+    $number_filter_row = $statement->rowCount();
+
+    $statement = $connect->prepare($query . $query1);
+
+    $statement->execute();
+
+    $result = $statement->fetchAll();
+
+    $data = array();
+
+    foreach ($result as $row) {
+        $sub_array = array();
+
+        $sub_array[] = '#' . $row['id'];
+        $sub_array[] = ucwords($row['grade'] . ' - ' . $row['section']);
+        $sub_array[] = date('h:i A', strtotime($row['start_time'])) . ' - ' . date('h:i A', strtotime($row['end_time']));
+        $sub_array[] = $row['name'];
+        $sub_array[] = $row['subject'];
+        $sub_array[] = ucwords($row['f_name'] . ' ' . $row['l_name']);;
+        $sub_array[] = '<div class="d-flex flex-row align-items-center gap-2" style="gap: 5px;"> <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-regular fa-pen-to-square"></i></button> <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash"></i></button></div>';
+        $data[] = $sub_array;
+    }
+
+    function count_all_data($connect)
+    {
+        $query = "SELECT tbl_classroom_schedule.id, tbl_grade_level.grade, tbl_section.section, tbl_classroom_schedule.start_time, tbl_classroom_schedule.end_time, tbl_days.`name`, tbl_subject.`subject`, tbl_teacher.f_name, tbl_teacher.l_name
+        FROM tbl_classroom_schedule
+        LEFT JOIN tbl_section
+        ON tbl_classroom_schedule.section_id = tbl_section.id
+        LEFT JOIN tbl_grade_level
+        ON tbl_section.grade_level_id = tbl_grade_level.id
+        LEFT JOIN tbl_days
+        ON tbl_classroom_schedule.day_id = tbl_days.id
+        LEFT JOIN tbl_subject
+        ON tbl_classroom_schedule.subject_id = tbl_subject.id
+        LEFT JOIN tbl_teacher
+        ON tbl_classroom_schedule.teacher_id = tbl_teacher.id
+        WHERE tbl_classroom_schedule.is_deleted = 'no'";
+        $statement = $connect->prepare($query);
+        $statement->execute();
+        return $statement->rowCount();
+    }
+
+    $output = array(
+        'draw' => intval($_POST['draw']),
+        'recordsTotal' => count_all_data($connect),
+        'recordsFiltered' => $number_filter_row,
+        'data' => $data,
+    );
+
+    echo json_encode($output);
+}
 ?>

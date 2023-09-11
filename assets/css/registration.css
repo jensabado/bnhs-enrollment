@@ -2,117 +2,160 @@
 # Departments
 --------------------------------------------------------------*/
 .registration {
-    overflow: hidden;
-    background-color: rgb(255, 255, 255);
-    font-family: sans-serif;
-  }
-  
-  .registration .nav-tabs {
-    border: 0;
-  }
-  
-  .registration .nav-link {
-    border: 0;
-    padding: 12px 15px 12px 15px;
-    transition: 0.3s;
-    color: #2c4964;
-    border-radius: 0;
-    border-right: 2px solid #ebf1f6;
-    font-weight: 600;
-    font-size: 15px;
-  }
-  
-  .registration .nav-link:hover {
-    color: #274c43;
-  }
-  
-  .registration .nav-link.active {
-    color: white;
-    font-weight: bold;
-    background-color: #274c43;
-  }
-  
-  .registration .tab-pane.active {
-    animation: fadeIn 0.5s ease-out;
-  }
-  
-  .registration .details h3 {
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #2c4964;
-  }
-  
-  .registration .details p {
-    color: #777777;
-  }
-  
-  .registration .details p:last-child {
-    margin-bottom: 0;
-  }
-  
-  @media (max-width: 992px) {
-    .registration .nav-link {
-      border: 0;
-      padding: 15px;
-    }
-  
-    .registration .nav-link.active {
-      color: #fff;
-      background: #274c43;
-    }
-  }
-   textarea{
-    resize: none;
-   }
-   
-   .registration input, textarea{
-    margin-bottom: 5px;
-   }
-   .btn-submit{
-    background-color: #274c43;
-    color: #fff;
-    border: 2px solid #274c43;
-    font-weight: bold;
-   }
-   .btn-submit:hover{
-    border: 2px solid #192925;
-    background-color: #192925; 
-    color: #fff;
-   }
-   .btn-upload{
-    background-color: #274c43;
-    color: #fff;
-    border: 2px solid #274c43;
-    font-weight: bold;
-    text-align: left;
-   }
-   .btn-upload:hover{
-    border: 2px solid #192925;
-    background-color: #192925; 
-    color: #fff;
-   }
+	overflow: hidden;
+	background-color: rgb(255, 255, 255);
+	font-family: "Poppins", sans-serif !important;
+}
 
-   /* file upload button */
+.registration .nav-tabs {
+	border: 0;
+}
+
+.registration .nav-link {
+	border: 0;
+	padding: 12px 15px 12px 15px;
+	transition: 0.3s;
+	color: #2c4964;
+	border-radius: 0;
+	border-right: 2px solid #ebf1f6;
+	font-weight: 600;
+	font-size: 15px;
+}
+
+.registration .nav-link:hover {
+	color: #274c43;
+}
+
+.registration .nav-link.active {
+	color: white;
+	font-weight: bold;
+	background-color: #274c43;
+}
+
+.registration .tab-pane.active {
+	animation: fadeIn 0.5s ease-out;
+}
+
+.registration .details h3 {
+	font-size: 26px;
+	font-weight: 600;
+	margin-bottom: 20px;
+	color: #2c4964;
+}
+
+.registration .details p {
+	color: #777777;
+}
+
+.registration .details p:last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 992px) {
+	.registration .nav-link {
+		border: 0;
+		padding: 15px;
+	}
+
+	.registration .nav-link.active {
+		color: #fff;
+		background: #274c43;
+	}
+}
+textarea {
+	resize: none;
+}
+
+.registration input,
+textarea {
+	margin-bottom: 5px;
+}
+.btn-submit {
+	background-color: #274c43;
+	color: #fff;
+	border: 2px solid #274c43;
+	font-weight: bold;
+}
+.btn-submit:hover {
+	border: 2px solid #192925;
+	background-color: #192925;
+	color: #fff;
+}
+.btn-upload {
+	background-color: #274c43;
+	color: #fff;
+	border: 2px solid #274c43;
+	font-weight: bold;
+	text-align: left;
+}
+.btn-upload:hover {
+	border: 2px solid #192925;
+	background-color: #192925;
+	color: #fff;
+}
+
+/* file upload button */
 input[type="file"]::file-selector-button {
-    border-radius: 4px;
-    padding: 0 16px;
-    height: 40px;
-    cursor: pointer;
-    background-color: #274c43;
-    border: 1px solid #274c43;
-    color: #fff;
-    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
-    transition: background-color 200ms;
-  }
-  
-  /* file upload button hover state */
-  input[type="file"]::file-selector-button:hover {
-    background-color: #192925;
-  }
-  
-  /* file upload button active state */
-  input[type="file"]::file-selector-button:active {
-    background-color: #192925;
-  }
-  
+	border-radius: 4px;
+	padding: 0 16px;
+	height: 40px;
+	cursor: pointer;
+	background-color: #274c43;
+	border: 1px solid #274c43;
+	color: #fff;
+	box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+	transition: background-color 200ms;
+}
+
+/* file upload button hover state */
+input[type="file"]::file-selector-button:hover {
+	background-color: #192925;
+}
+
+/* file upload button active state */
+input[type="file"]::file-selector-button:active {
+	background-color: #192925;
+}
+
+label {
+	font-size: 14px !important;
+}
+
+.form-control {
+	font-size: 14px !important;
+	height: 45px !important;
+}
+
+textarea.form-control {
+	height: 70px !important;
+}
+
+.form-control::placeholder {
+	font-size: 14px !important;
+}
+
+input[type="file"] {
+	height: unset !important;
+}
+
+.custom-file-button input[type="file"] {
+	margin-left: -2px !important;
+	height: 45px !important;
+	line-height: 31px !important;
+}
+.custom-file-button input[type="file"]::-webkit-file-upload-button {
+	display: none;
+}
+.custom-file-button input[type="file"]::file-selector-button {
+	display: none;
+}
+.custom-file-button label {
+	background-color: #274c43;
+	color: #fff !important;
+	height: 46px !important;
+}
+.custom-file-button:hover label {
+	background-color: #192925;
+	color: #fff;
+	cursor: pointer;
+}

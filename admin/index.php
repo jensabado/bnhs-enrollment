@@ -8,9 +8,9 @@ ob_start();
         <h1>Dashboard</h1>
     </div>
     <div class="section-body">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+        <div class="row d-flex flex-row align-items-stretch">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/building.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -24,13 +24,13 @@ ob_start();
                         $stmt->close();
                         ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $building ?></p>
-                            <p class="h6">Building</p>
+                            <p class="h6 text-right">Building</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/room.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -45,13 +45,13 @@ ob_start();
                         $stmt->close();
                         ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $room ?></p>
-                            <p class="h6">Room</p>
+                            <p class="h6 text-right">Room</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/section.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -67,13 +67,13 @@ ob_start();
                         $stmt->close();
                         ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $section ?></p>
-                            <p class="h6">Section</p>
+                            <p class="h6 text-right">Section</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/teacher.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -88,13 +88,13 @@ ob_start();
                         $stmt->close();
                         ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $teacher ?></p>
-                            <p class="h6">Teacher</p>
+                            <p class="h6 text-right">Teacher</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/grade_7_sub.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -109,13 +109,13 @@ ob_start();
                             $stmt->close();
                             ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $grade_7_sub ?></p>
-                            <p class="h6">Grade 7 Subject</p>
+                            <p class="h6 text-right">Grade 7 Subject</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/grade_8_sub.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -130,13 +130,13 @@ ob_start();
                             $stmt->close();
                             ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $grade_8_sub ?></p>
-                            <p class="h6">Grade 8 Subject</p>
+                            <p class="h6 text-right">Grade 8 Subject</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/grade_9_sub.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -151,13 +151,13 @@ ob_start();
                             $stmt->close();
                             ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $grade_9_sub ?></p>
-                            <p class="h6">Grade 9 Subject</p>
+                            <p class="h6 text-right">Grade 9 Subject</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow p-3">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" style="margin-bottom: 30px">
+                <div class="card shadow px-3 h-100 d-flex justify-content-center">
                     <div class="d-flex flex-row align-items-center">
                         <img style="height: 80px;" src="./assets/img/illustration/grade_10_sub.svg" alt="">
                         <div class="d-flex flex-column align-items-end w-100 h-100">
@@ -172,7 +172,7 @@ ob_start();
                             $stmt->close();
                             ?>
                             <p style="font-weight: 900; color: #274C43;" class="h1"><?= $grade_10_sub ?></p>
-                            <p class="h6">Grade 10 Subject</p>
+                            <p class="h6 text-right">Grade 10 Subject</p>
                         </div>
                     </div>
                 </div>

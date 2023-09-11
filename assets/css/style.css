@@ -1,6 +1,6 @@
 
 body {
-  font-family: sans-serif;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 a {
@@ -19,7 +19,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: sans-serif;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 /*--------------------------------------------------------------
@@ -171,7 +171,7 @@ h6 {
   line-height: 1;
   font-weight: 700;
   letter-spacing: 0.5px;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 #header .logo a {
@@ -494,7 +494,7 @@ h6 {
 }
 
 #hero .btn-get-started {
-  font-family: "Raleway", sans-serif;
+  font-family: 'Poppins', sans-serif !important;
   text-transform: uppercase;
   font-weight: 700;
   font-size: 14px;
@@ -932,7 +932,7 @@ section {
 .counts .count-box p {
   padding: 0;
   margin: 0;
-  font-family: "Raleway", sans-serif;
+  font-family: 'Poppins', sans-serif !important;
   font-size: 14px;
 }
 
@@ -1313,7 +1313,7 @@ section {
   font-size: 14px;
   line-height: 24px;
   margin-bottom: 0;
-  font-family: "Raleway", sans-serif;
+  font-family: 'Poppins', sans-serif !important;
   color: #ffff;
 }
 

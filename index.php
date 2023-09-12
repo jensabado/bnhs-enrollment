@@ -208,7 +208,7 @@ ob_start();
 ?>
 <script>
 $(document).ready(function() {
-    if (localStorage.getItem(status) == 'registration_submitted') {
+    if (localStorage.getItem('status') == 'registration_submitted') {
         Swal.fire({
             icon: 'success',
             title: 'Success!',

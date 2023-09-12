@@ -166,8 +166,9 @@
                                                                     <label class="col-md-3 col-form-label">Date of
                                                                         Birth</label>
                                                                     <div class="col-md-9">
-                                                                        <input class="form-control" id="add_bdate" type="date"
-                                                                            name="add_bdate" placeholder="dd/mm/yyyy"
+                                                                        <input class="form-control" id="add_bdate"
+                                                                            type="date" name="add_bdate"
+                                                                            placeholder="dd/mm/yyyy"
                                                                             data-inputmask-alias="datetime"
                                                                             data-inputmask-inputformat="dd/mm/yyyy" />
 
@@ -671,8 +672,9 @@
                                                                     <label class="col-md-3 col-form-label">Date of
                                                                         Birth</label>
                                                                     <div class="col-md-9">
-                                                                        <input class="form-control" id="date" type="date"
-                                                                            name="date" placeholder="dd/mm/yyyy"
+                                                                        <input class="form-control" id="date"
+                                                                            type="date" name="date"
+                                                                            placeholder="dd/mm/yyyy"
                                                                             data-inputmask-alias="datetime"
                                                                             data-inputmask-inputformat="dd/mm/yyyy" />
                                                                     </div>
@@ -1100,120 +1102,120 @@
                     $('#add_new_student_btn').prop('disabled', false);
                     let data = JSON.parse(response);
                     if (data.status === 'invalid') {
-                        if (data.firstname != '') {
+                        if (data.add_firstname != '') {
                             $('#add_firstname_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.firstname);
+                                data.add_firstname);
                             $("#add_firstname").addClass('border-danger');
                         } else {
                             $('#add_firstname_error').html('');
                             $("#add_firstname").removeClass('border-danger');
                         }
 
-                        if (data.lastname != '') {
+                        if (data.add_lastname != '') {
                             $('#add_lastname_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.lastname);
+                                data.add_lastname);
                             $("#add_lastname").addClass("border-danger");
                         } else {
                             $('#add_lastname_error').html('');
                             $("#add_lastname").removeClass('border-danger');
                         }
 
-                        if (data.bdate != '') {
+                        if (data.add_bdate != '') {
                             $('#add_bdate_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.bdate);
+                                data.add_bdate);
                             $("#add_bdate").addClass("border-danger");
                         } else {
                             $('#add_bdate_error').html('');
                             $("#add_bdate").removeClass('border-danger');
                         }
 
-                        if (data.address != '') {
+                        if (data.add_address != '') {
                             $('#add_address_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.address);
+                                data.add_address);
                             $("#add_address").addClass("border-danger");
                         } else {
                             $('#add_address_error').html('');
                             $("#add_address").removeClass('border-danger');
                         }
 
-                        if (data.placebirth != '') {
+                        if (data.add_placebirth != '') {
                             $('#add_placebirth_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.placebirth);
+                                data.add_placebirth);
                             $("#add_placebirth").addClass("border-danger");
                         } else {
                             $('#add_placebirth_error').html('');
                             $("#add_placebirth").removeClass('border-danger');
                         }
 
-                        if (data.nationality != '') {
+                        if (data.add_nationality != '') {
                             $('#add_nationality_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.nationality);
+                                data.add_nationality);
                             $("#add_nationality").addClass("border-danger");
                         } else {
                             $('#add_nationality_error').html('');
                             $("#add_nationality").removeClass('border-danger');
                         }
 
-                        if (data.religion != '') {
+                        if (data.add_religion != '') {
                             $('#add_religion_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.religion);
+                                data.add_religion);
                             $("#add_religion").addClass("border-danger");
                         } else {
                             $('#add_religion_error').html('');
                             $("#add_religion").removeClass('border-danger');
                         }
 
-                        if (data.civil_status != '') {
+                        if (data.add_civil_status != '') {
                             $('#add_civil_status_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.civil_status);
+                                data.add_civil_status);
                             $("#add_civil_status").addClass("border-danger");
                         } else {
                             $('#add_civil_status_error').html('');
                             $("#add_civil_status").removeClass('border-danger');
                         }
 
-                        if (data.contact != '') {
+                        if (data.add_contact != '') {
                             $('#add_contact_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.contact);
+                                data.add_contact);
                             $("#add_contact").addClass("border-danger");
                         } else {
                             $('#add_contact_error').html('');
                             $("#add_contact").removeClass('border-danger');
                         }
 
-                        if (data.guardian != '') {
+                        if (data.add_guardian != '') {
                             $('#add_guardian_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.guardian);
+                                data.add_guardian);
                             $("#add_guardian").addClass("border-danger");
                         } else {
                             $('#add_guardian_error').html('');
                             $("#add_guardian").removeClass('border-danger');
                         }
 
-                        if (data.email != '') {
+                        if (data.add_email != '') {
                             $('#add_email_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.email);
+                                data.add_email);
                             $("#add_email").addClass("border-danger");
                         } else {
                             $('#add_email_error').html('');
                             $("#add_email").removeClass('border-danger');
                         }
 
-                        if (data.guardian_contact != '') {
+                        if (data.add_guardian_contact != '') {
                             $('#add_guardian_contact_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.guardian_contact);
+                                data.add_guardian_contact);
                             $("#add_guardian_contact").addClass("border-danger");
                         } else {
                             $('#add_guardian_contact_error').html('');
@@ -1230,69 +1232,82 @@
                             $("#add_video").removeClass('border-danger');
                         }
 
-                        if (data.pdf_file != '') {
+                        if (data.add_pdf_file != '') {
                             $('#add_pdf_file_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.pdf_file);
+                                data.add_pdf_file);
                             $("#add_pdf_file").addClass("border-danger");
                         } else {
                             $('#add_pdf_file_error').html('');
                             $("#add_pdf_file").removeClass('border-danger');
                         }
 
-                        if (data.form_138 != '') {
+                        if (data.add_form_138 != '') {
                             $('#add_form_138_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.form_138);
+                                data.add_form_138);
                             $("#add_form_138").addClass("border-danger");
                         } else {
                             $('#add_form_138_error').html('');
                             $("#add_form_138").removeClass('border-danger');
                         }
 
-                        if (data.psa != '') {
+                        if (data.add_psa != '') {
                             $('#add_psa_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.psa);
+                                data.add_psa);
                             $("#add_psa").addClass("border-danger");
                         } else {
                             $('#add_psa_error').html('');
                             $("#add_psa").removeClass('border-danger');
                         }
 
-                        if (data.brgy_clearance != '') {
+                        if (data.add_brgy_clearance != '') {
                             $('#add_brgy_clearance_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.brgy_clearance);
+                                data.add_brgy_clearance);
                             $("#add_brgy_clearance").addClass("border-danger");
                         } else {
                             $('#add_brgy_clearance_error').html('');
                             $("#add_brgy_clearance").removeClass('border-danger');
                         }
 
-                        if (data.good_moral != '') {
+                        if (data.add_good_moral != '') {
                             $('#add_good_moral_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.good_moral);
+                                data.add_good_moral);
                             $("#add_good_moral").addClass("border-danger");
                         } else {
                             $('#add_good_moral_error').html('');
                             $("#add_good_moral").removeClass('border-danger');
                         }
 
-                        if (data.guardian_id != '') {
+                        if (data.add_guardian_id != '') {
                             $('#add_guardian_id_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.guardian_id);
+                                data.add_guardian_id);
                             $("#add_guardian_id").addClass("border-danger");
                         } else {
                             $('#add_guardian_id_error').html('');
                             $("#add_guardian_id").removeClass('border-danger');
                         }
-                    } else if(data.status === 'success') {
+                    } else if (data.status === 'success') {
                         localStorage.setItem('status', 'registration_submitted');
                         localStorage.setItem('message', data.message);
                         window.location.href = 'index';
+                    } else if (data.status === 'failed') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed!',
+                            text: localStorage.getItem('message'),
+                            iconColor: '#274c43',
+                            confirmButtonColor: '#274c43',
+                            showConfirmButton: false,
+                            timer: 5000,
+                            timerProgressBar: true,
+                            color: '#000',
+                            background: '#fff',
+                        })
                     }
                 }
             })

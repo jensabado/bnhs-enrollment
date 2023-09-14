@@ -9,7 +9,7 @@ ob_start();
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Room</h5>
+                <h5 class="modal-title">Add Section</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -87,7 +87,7 @@ ob_start();
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Building</h5>
+                <h5 class="modal-title">Edit Section</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -337,7 +337,7 @@ $(document).ready(function() {
             $('#filter_room').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/backend.php",
+                url: "./controller/function_class",
                 type: "POST",
                 data: {
                     building_id: building_id,
@@ -369,7 +369,7 @@ $(document).ready(function() {
             $('#add_section_room_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/backend.php",
+                url: "./controller/function_class",
                 type: "POST",
                 data: {
                     building_id: building_id,
@@ -396,13 +396,14 @@ $(document).ready(function() {
             $('#edit_section_room_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/backend.php",
+                url: "./controller/function_class",
                 type: "POST",
                 data: {
                     building_id: building_id,
                     get_room: true,
                 },
                 success: function(data) {
+                console.log(data);
                     $('#edit_section_room_id').select2({
                         dropdownParent: $('#edit_modal'),
                         placeholder: "SELECT ROOM",
@@ -429,7 +430,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -501,7 +502,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -518,7 +519,7 @@ $(document).ready(function() {
                 $('#edit_section_room_id').attr('disabled', false);
 
                 $.ajax({
-                    url: "./controller/backend.php",
+                    url: "./controller/function_class",
                     type: "POST",
                     data: {
                         building_id: data.building_id,
@@ -543,7 +544,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -629,7 +630,7 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: "POST",
-                    url: "./controller/backend.php",
+                    url: "./controller/function_class",
                     data: form,
                     processData: false,
                     contentType: false,
@@ -673,6 +674,7 @@ $(document).ready(function() {
     // hide modal reset 
     $('#add_modal').on('hidden.bs.modal', function() {
         $(this).find('form').trigger('reset');
+        $('#add_grade_level_id').val('').trigger('change');
         $('#add_section_building_id').val('').trigger('change');
         $('#add_section_room_id').val('').trigger('change');
     });

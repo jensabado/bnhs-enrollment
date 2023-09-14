@@ -54,12 +54,12 @@ if (isset($_POST['add_new_student'])) {
         $fileMimeType = $_FILES['add_video']['type'];
 
         if (in_array($fileExtension, $allowedExtensions) && in_array($fileMimeType, $allowedMimeTypes)) {
-            $response['video'] = '';
+            $response['add_video'] = '';
         } else {
-            $response['video'] = 'Invalid file type. Only video files are allowed.';
+            $response['add_video'] = 'Invalid file type. Only video files are allowed.';
         }
     } else {
-        $response['video'] = 'Video Record required!';
+        $response['add_video'] = 'Video Record required!';
     }
 
     $required_files = array(
@@ -129,7 +129,7 @@ if (isset($_POST['add_new_student'])) {
 
         if (mysqli_num_rows($result) > 0) {
             $response['status'] = 'invalid';
-            $response['email'] = 'Email already used!';
+            $response['add_email'] = 'Email already used!';
             mysqli_stmt_close($query);
         } else {
             mysqli_stmt_close($query);

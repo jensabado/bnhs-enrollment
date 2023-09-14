@@ -53,7 +53,7 @@ ob_start();
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Building</h5>
+                <h5 class="modal-title">Edit Room</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -246,7 +246,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -318,7 +318,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -328,7 +328,7 @@ $(document).ready(function() {
                 $('#edit_modal').modal('show');
                 let data = JSON.parse(response);
                 $('#edit_room_id').val(data.id);
-                $('#edit_building_id').val(data.building_id);
+                $('#edit_building_id').val(data.building_id).trigger('change');
                 $('#edit_room_name').val(data.room_name);
             }
         })
@@ -343,7 +343,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -429,7 +429,7 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: "POST",
-                    url: "./controller/backend.php",
+                    url: "./controller/function_class",
                     data: form,
                     processData: false,
                     contentType: false,

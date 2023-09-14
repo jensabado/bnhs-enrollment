@@ -114,7 +114,7 @@ if(isset($_SESSION['bnhses_admin_id'])) {
 
             $.ajax({
                 type: "POST",
-                url: "./controller/backend",
+                url: "./controller/function_class",
                 data: form,
                 processData: false,
                 contentType: false,

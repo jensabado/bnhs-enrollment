@@ -156,7 +156,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -228,7 +228,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -252,7 +252,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "./controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -338,7 +338,7 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: "POST",
-                    url: "./controller/backend.php",
+                    url: "./controller/function_class",
                     data: form,
                     processData: false,
                     contentType: false,

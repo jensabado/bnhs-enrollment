@@ -1222,10 +1222,10 @@
                             $("#add_guardian_contact").removeClass('border-danger');
                         }
 
-                        if (data.video != '') {
+                        if (data.add_video != '') {
                             $('#add_video_error').html(
                                 '<i class="fa-solid fa-triangle-exclamation pe-1"></i>' +
-                                data.video);
+                                data.add_video);
                             $("#add_video").addClass("border-danger");
                         } else {
                             $('#add_video_error').html('');

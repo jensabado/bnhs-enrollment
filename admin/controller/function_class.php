@@ -218,7 +218,7 @@ class Database
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             $stmt->bind_result($id, $room);
             echo '<option value="">SELECT ROOM</option>';
             while ($stmt->fetch()) {
@@ -231,19 +231,22 @@ class Database
         $stmt->close();
     }
 
-    public function addSection($gradeLevelId, $buildingId, $roomId, $name) {
-        $stmt = $this->conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND grade_level_id = ? AND room_id = ? AND section = ?");
-        $stmt->bind_param("iiis", $buildingId, $gradeLevelId, $roomId, $name);
+    public function addSection($gradeLevelId, $buildingId, $roomId, $name)
+    {
+        $in_id = 0;
+        $stmt = $this->conn->prepare("CALL `checkIfSectionExist`(?, ?, ?, ?, ?);");
+        $stmt->bind_param("iiisi", $buildingId, $gradeLevelId, $roomId, $name, $in_id);
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             echo 'already exist';
         } else {
-            $stmt = $this->conn->prepare("INSERT INTO tbl_section (building_id, grade_level_id, room_id, section) VALUES (?, ?, ?, ?)");
+            $stmt->close();
+            $stmt = $this->conn->prepare("CALL `insertSection`(?, ?, ?, ?);");
             $stmt->bind_param("iiis", $buildingId, $gradeLevelId, $roomId, $name);
-            
-            if($stmt->execute()) {
+
+            if ($stmt->execute()) {
                 echo 'success';
             }
         }
@@ -251,15 +254,16 @@ class Database
         $stmt->close();
     }
 
-    public function getSectionInfo($id) {
-        $stmt = $this->conn->prepare("SELECT id, building_id, grade_level_id, room_id, section FROM tbl_section WHERE id = ?");
+    public function getSectionInfo($id)
+    {
+        $stmt = $this->conn->prepare("CALL `getSectionInfo`(?)");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             $stmt->bind_result($id, $buildingId, $gradeLevelId, $roomId, $section);
-            while($stmt->fetch()) {
+            while ($stmt->fetch()) {
                 $result_array = array(
                     'id' => $id,
                     'building_id' => $buildingId,
@@ -277,19 +281,21 @@ class Database
         $stmt->close();
     }
 
-    public function editSection($id, $gradeLevelId, $buildingId, $roomId, $name) {
-        $stmt = $this->conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND grade_level_id = ? AND room_id = ? AND section = ? AND id != ? AND is_deleted = 'no'");
+    public function editSection($id, $gradeLevelId, $buildingId, $roomId, $name)
+    {
+        $stmt = $this->conn->prepare("CALL `checkIfSectionExist`(?, ?, ?, ?, ?);");
         $stmt->bind_param("iiisi", $buildingId, $gradeLevelId, $roomId, $name, $id);
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             echo 'already exist';
         } else {
-            $stmt = $this->conn->prepare("UPDATE tbl_section SET building_id = ?, grade_level_id = ?, room_id = ?, section = ? WHERE id = ?");
+            $stmt->close();
+            $stmt = $this->conn->prepare("CALL `editSection`(?, ?, ?, ?, ?)");
             $stmt->bind_param("iiisi", $buildingId, $gradeLevelId, $roomId, $name, $id);
-            
-            if($stmt->execute()) {
+
+            if ($stmt->execute()) {
                 echo 'success';
             }
         }
@@ -297,15 +303,35 @@ class Database
         $stmt->close();
     }
 
-    public function deleteSection($id) {
-        $stmt = $this->conn->prepare("UPDATE tbl_section SET is_deleted = 'yes' WHERE id = ?");
+    public function deleteSection($id)
+    {
+        $stmt = $this->conn->prepare("CALL `deleteSection`(?);");
         $stmt->bind_param("i", $id);
 
-        if($stmt->execute()) {
+        if ($stmt->execute()) {
             echo 'success';
         }
 
         $stmt->close();
+    }
+
+    public function addSubject($gradeLevel, $subject) {
+        $stmt = $this->conn->prepare("CALL `checkSubjectIfExist`(?, ?);");
+        $stmt->bind_param("is", $gradeLevel, $subject);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if($stmt->num_rows > 0) {
+            echo 'already exist';
+        } else {
+            $stmt->close();
+            $stmt = $this->conn->prepare("CALL `insertSubject`(?, ?);");
+            $stmt->bind_param("is", $gradeLevel, $subject);
+
+            if($stmt->execute()) {
+                echo 'success';
+            }
+        }
     }
 }
 
@@ -370,7 +396,7 @@ if (isset($_POST['get_room'])) {
     $database->getRoom($buildingId);
 }
 
-if(isset($_POST['add_section'])) {
+if (isset($_POST['add_section'])) {
     $gradeLevelId = $_POST['add_grade_level_id'];
     $buildingId = $_POST['add_section_building_id'];
     $roomId = $_POST['add_section_room_id'];
@@ -378,12 +404,12 @@ if(isset($_POST['add_section'])) {
     $database->addSection($gradeLevelId, $buildingId, $roomId, $name);
 }
 
-if(isset($_POST['get_section_info'])) {
+if (isset($_POST['get_section_info'])) {
     $id = $_POST['section_id'];
     $database->getSectionInfo($id);
 }
 
-if(isset($_POST['edit_section'])) {
+if (isset($_POST['edit_section'])) {
     $id = $_POST['edit_section_id'];
     $gradeLevelId = $_POST['edit_grade_level_id'];
     $buildingId = $_POST['edit_section_building_id'];
@@ -392,7 +418,13 @@ if(isset($_POST['edit_section'])) {
     $database->editSection($id, $gradeLevelId, $buildingId, $roomId, $name);
 }
 
-if(isset($_POST['delete_section'])) {
+if (isset($_POST['delete_section'])) {
     $id = $_POST['id'];
     $database->deleteSection($id);
+}
+
+if(isset($_POST['add_subject'])) {
+    $gradeLevel = $_POST['add_grade_level'];
+    $subject = $_POST['add_subject_name'];
+    $database->addSubject($gradeLevel, $subject);
 }

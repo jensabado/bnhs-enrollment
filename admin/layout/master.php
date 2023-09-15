@@ -122,14 +122,14 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
                         <li><a class="nav-link" href="classroom-schedule"><i
                                     class="fas fa-regular fa-calendar-days"></i>
                                 <span>Classroom Schedule</span></a></li>
-                        <li class="menu-header">Stisla</li>
+                        <!-- <li class="menu-header">Stisla</li>
                         <li class="dropdown">
                             <a href="#" class="nav-link has-dropdown"><i class="fas fa-th-large"></i>
                                 <span>Components</span></a>
                             <ul class="dropdown-menu">
                                 <li><a class="nav-link beep-sidebar" href="components-wizard.html">Wizard</a></li>
                             </ul>
-                        </li>
+                        </li> -->
                     </ul>
                 </aside>
             </div>

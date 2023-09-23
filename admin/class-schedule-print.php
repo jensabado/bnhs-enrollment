@@ -131,7 +131,8 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
             ?>
         </table>
         <div class="row" id="printed_info">
-            <p class="fw-bold">Printed By: <span style="font-weight: 500; padding-left: 10px"><?= $admin_name ?></span></p>
+            <p class="fw-bold">Printed By: <span style="font-weight: 500; padding-left: 10px"><?= $admin_name ?></span>
+            </p>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
@@ -142,6 +143,15 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
     function printPage() {
         window.print();
         return false;
+    }
+
+    window.onload = function() {
+        window.print();
+    }
+
+    window.onafterprint = function() {
+        // Redirect back to the index page
+        window.close();
     }
     </script>
 </body>

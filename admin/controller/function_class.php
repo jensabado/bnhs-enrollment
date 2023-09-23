@@ -342,15 +342,16 @@ class Database
         }
     }
 
-    public function getSubjectInfo($id) {
+    public function getSubjectInfo($id)
+    {
         $stmt = $this->conn->prepare("CALL `getSubjectInfo`(?)");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             $stmt->bind_result($id, $gradeLevelId, $subject);
-            while($stmt->fetch()) {
+            while ($stmt->fetch()) {
                 $result_array = array(
                     'id' => $id,
                     'grade_level_id' => $gradeLevelId,
@@ -365,20 +366,21 @@ class Database
         $stmt->close();
     }
 
-    public function editSubject($id, $gradeLevel, $subject) {
+    public function editSubject($id, $gradeLevel, $subject)
+    {
         $stmt = $this->conn->prepare("CALL `subjectValidation`(?, ?, ?)");
         $stmt->bind_param('isi', $gradeLevel, $subject, $id);
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             echo 'already exist';
         } else {
             $stmt->close();
             $stmt = $this->conn->prepare("CALL `editSubject`(?, ?, ?)");
             $stmt->bind_param('isi', $gradeLevel, $subject, $id);
 
-            if($stmt->execute()) {
+            if ($stmt->execute()) {
                 echo 'success';
             }
         }
@@ -386,15 +388,49 @@ class Database
         $stmt->close();
     }
 
-    public function deleteSubject($id) {
+    public function deleteSubject($id)
+    {
         $stmt = $this->conn->prepare("CALL `deleteSubject`(?)");
         $stmt->bind_param('i', $id);
 
-        if($stmt->execute()) {
+        if ($stmt->execute()) {
             echo 'success';
         }
 
         $stmt->close();
+    }
+
+    public function addTeacher($fname, $lname, $gender, $mobileNo, $email, $password, $avatar)
+    {
+        $encryptedPassword = md5($password);
+        $id = 0;
+        $stmt = $this->conn->prepare("CALL `teacherValidation`(?, ?)");
+        $stmt->bind_param("si", $email, $id);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            echo "already exist";
+        } else {
+            $stmt->close();
+            $newImageName = '';
+
+            if (!empty($avatar)) {
+                $avatar = $_FILES["add_avatar"]["name"];
+                $img_ext = pathinfo($avatar, PATHINFO_EXTENSION);
+                $newImageName = uniqid() . "." . $img_ext;
+                $avatarTmp = $_FILES["add_avatar"]["tmp_name"];
+                move_uploaded_file($avatarTmp, "../assets/img/avatar/" . $newImageName);
+            }
+
+            $stmt = $this->conn->prepare("CALL `insertTeacher`(?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssss", $fname, $lname, $gender, $mobileNo, $newImageName, $email, $encryptedPassword);
+
+            if ($stmt->execute()) {
+                echo "success";
+            }
+            $stmt->close();
+        }
     }
 }
 
@@ -492,19 +528,30 @@ if (isset($_POST['add_subject'])) {
     $database->addSubject($gradeLevel, $subject);
 }
 
-if(isset($_POST['get_subject_info'])) {
+if (isset($_POST['get_subject_info'])) {
     $id = $_POST['subject_id'];
     $database->getSubjectInfo($id);
 }
 
-if(isset($_POST['edit_subject'])) {
+if (isset($_POST['edit_subject'])) {
     $id = $_POST['edit_subject_id'];
     $gradeLevel = $_POST['edit_grade_level'];
     $subject = $_POST['edit_subject_name'];
     $database->editSubject($id, $gradeLevel, $subject);
 }
 
-if(isset($_POST['delete_subject'])) {
+if (isset($_POST['delete_subject'])) {
     $id = $_POST['id'];
     $database->deleteSubject($id);
+}
+
+if (isset($_POST['add_teacher'])) {
+    $fname = $_POST["add_f_name"];
+    $lname = $_POST["add_l_name"];
+    $gender = $_POST["add_gender"];
+    $mobileNo = $_POST["add_mobile_no"];
+    $email = $_POST["add_email"];
+    $password = $_POST["add_password"];
+    $avatar = $_FILES["add_avatar"]["tmp_name"] ?? '';
+    $database->addTeacher($fname, $lname, $gender, $mobileNo, $email, $password, $avatar);
 }

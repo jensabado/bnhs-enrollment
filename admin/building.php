@@ -134,10 +134,25 @@ $(document).ready(function() {
         ]
     });
 
+    var dropdownOpen = false;
+
+    $('#table').on('click', '.my-dropdown', function(event) {
+        dropdownOpen = true;
+    });
+
+    $(document).on('click', function() {
+        if (dropdownOpen) {
+            dropdownOpen = false;
+        }
+    });
+
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 
     setInterval(function() {
-        dataTable.ajax.reload(null, false);
+        if (!dropdownOpen) {
+            dataTable.ajax.reload(null,
+            false); // Set the second parameter to false to keep the current page
+        }
     }, 10000); // END DATATABLES
 
     // modal function

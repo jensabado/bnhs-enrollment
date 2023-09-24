@@ -129,17 +129,28 @@ $(document).ready(function() {
             [0, 'desc']
         ],
         "lengthMenu": [
-            [5, 10, 25, 50, -1],
-            [5, 10, 25, 50, "All"]
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"]
         ]
     });
 
+    // Initialize a flag to check if the dropdown is open
     var dropdownOpen = false;
 
+    // Initialize a timestamp for the last dropdown click
+    var lastDropdownClick = 0;
+
+    var id = 0;
+
+    // Handle dropdown click to set the flag and update the timestamp
     $('#table').on('click', '.my-dropdown', function(event) {
+        id = $(this).data('id');
+        console.log(id);
         dropdownOpen = true;
+        lastDropdownClick = Date.now();
     });
 
+    // Handle document click to close the dropdown if it's open
     $(document).on('click', function() {
         if (dropdownOpen) {
             dropdownOpen = false;
@@ -148,10 +159,12 @@ $(document).ready(function() {
 
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 
+    // Periodically check if 1 minute has passed since the last dropdown click and close it
     setInterval(function() {
-        if (!dropdownOpen) {
-            dataTable.ajax.reload(null,
-            false); // Set the second parameter to false to keep the current page
+        if (dropdownOpen && Date.now() - lastDropdownClick >= 60000) {
+            // Close the dropdown
+            $('.my-dropdown[data-id="' + id + '"]').dropdown("toggle");
+            dropdownOpen = false;
         }
     }, 10000); // END DATATABLES
 

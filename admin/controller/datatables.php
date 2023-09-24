@@ -45,7 +45,7 @@ if (isset($_POST['building'])) {
         $sub_array[] = '#' . $row['id'];
         $sub_array[] = ucwords($row['building']);
         // $sub_array[] = '<div class="d-flex flex-row align-items-center gap-2" style="gap: 5px;"> <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-regular fa-pen-to-square"></i></button> <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash"></i></button></div>';
-        $sub_array[] = '<button class="btn btn-primary dropdown-toggle my-dropdown" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button> <div class="dropdown-menu"> <a class="dropdown-item text-primary" href="javascript:void(0)" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-solid fa-pen-to-square mr-3"></i>Edit</a> <a class="dropdown-item text-danger" href="javascript:void(0)" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash mr-3"></i>Delete</a> </div>';
+        $sub_array[] = '<button class="btn btn-primary dropdown-toggle my-dropdown" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id="' . $row['id'] . '"></button> <div class="dropdown-menu"> <a class="dropdown-item text-primary" href="javascript:void(0)" id="get_edit" data-id="' . $row['id'] . '"><i class="fa-solid fa-pen-to-square mr-3"></i>Edit</a> <a class="dropdown-item text-danger" href="javascript:void(0)" id="get_delete" data-id="' . $row['id'] . '"><i class="fa-solid fa-trash mr-3"></i>Delete</a> </div>';
         $data[] = $sub_array;
     }
 

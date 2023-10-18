@@ -1,5 +1,5 @@
 <?php
-require_once('../database/connection.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/database/connection.php');
 $page_title = 'Section';
 ob_start();
 
@@ -266,7 +266,7 @@ $(document).ready(function() {
         "scrollX": true,
         "sScrollXInner": "100%",
         "ajax": {
-            url: "./controller/datatables.php",
+            url: "<?= $rootSiteURLAdmin ?>controller/datatables.php",
             type: "POST",
             data: function(d) {
                 return $.extend({}, d, {
@@ -337,7 +337,7 @@ $(document).ready(function() {
             $('#filter_room').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/function_class",
+                url: "<?= $rootSiteURLAdmin ?>controller/function_class",
                 type: "POST",
                 data: {
                     building_id: building_id,
@@ -369,7 +369,7 @@ $(document).ready(function() {
             $('#add_section_room_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/function_class",
+                url: "<?= $rootSiteURLAdmin ?>controller/function_class",
                 type: "POST",
                 data: {
                     building_id: building_id,
@@ -396,7 +396,7 @@ $(document).ready(function() {
             $('#edit_section_room_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/function_class",
+                url: "<?= $rootSiteURLAdmin ?>controller/function_class",
                 type: "POST",
                 data: {
                     building_id: building_id,
@@ -430,7 +430,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/function_class",
+            url: "<?= $rootSiteURLAdmin ?>controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -502,7 +502,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/function_class",
+            url: "<?= $rootSiteURLAdmin ?>controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -519,7 +519,7 @@ $(document).ready(function() {
                 $('#edit_section_room_id').attr('disabled', false);
 
                 $.ajax({
-                    url: "./controller/function_class",
+                    url: "<?= $rootSiteURLAdmin ?>controller/function_class",
                     type: "POST",
                     data: {
                         building_id: data.building_id,
@@ -544,7 +544,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/function_class",
+            url: "<?= $rootSiteURLAdmin ?>controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -630,7 +630,7 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: "POST",
-                    url: "./controller/function_class",
+                    url: "<?= $rootSiteURLAdmin ?>controller/function_class",
                     data: form,
                     processData: false,
                     contentType: false,

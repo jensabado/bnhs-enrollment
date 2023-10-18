@@ -5,6 +5,24 @@ date_default_timezone_set('Asia/Manila');
 
 require_once '../../database/db.php';
 
+function sanitizeData($data) {
+    if (is_array($data)) {
+        // If $data is an array, sanitize each element recursively
+        foreach ($data as $key => $value) {
+            $data[$key] = sanitizeData($value);
+        }
+    } elseif (is_string($data)) {
+        // If $data is a string, apply string sanitization
+        $data = filter_var($data, FILTER_SANITIZE_STRING);
+    } elseif (is_int($data) || is_float($data)) {
+        // If $data is an integer or float, apply numeric sanitization
+        $data = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT);
+    }
+    
+    // Return the sanitized data
+    return $data;
+}
+
 class Database
 {
     private $conn;
@@ -22,7 +40,7 @@ class Database
     {
         $encryptedPassword = md5($password);
 
-        $stmt = $this->conn->prepare("CALL `checkIfEmailIsRegistered`(?)");
+        $stmt = $this->conn->prepare("SELECT id, password FROM tbl_admin WHERE email = ? AND status = 'enable' AND is_deleted = 'no'");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
@@ -54,7 +72,7 @@ class Database
     public function addBuilding($building)
     {
         $id = 0;
-        $stmt = $this->conn->prepare("CALL `buildingValidation`(?, ?)");
+        $stmt = $this->conn->prepare("SELECT * FROM tbl_building WHERE building = ? AND id != ? AND is_deleted = 'no'");
         $stmt->bind_param("si", $building, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -76,7 +94,7 @@ class Database
 
     public function getBuildingInfo($buildingId)
     {
-        $stmt = $this->conn->prepare("CALL `getBuildingInfo`(?)");
+        $stmt = $this->conn->prepare("SELECT id, building FROM tbl_building WHERE id = ? AND is_deleted = 'no'");
         $stmt->bind_param("i", $buildingId);
         $stmt->execute();
         $stmt->store_result();
@@ -101,7 +119,7 @@ class Database
 
     public function editBuilding($id, $building)
     {
-        $stmt = $this->conn->prepare("CALL `buildingValidation`(?, ?)");
+        $stmt = $this->conn->prepare("SELECT * FROM tbl_building WHERE building = ? AND id != ? AND is_deleted = 'no'");
         $stmt->bind_param("si", $building, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -110,7 +128,7 @@ class Database
             echo 'already exist';
         } else {
             $stmt->close();
-            $stmt = $this->conn->prepare("CALL `editBuilding`(?, ?)");
+            $stmt = $this->conn->prepare("UPDATE tbl_building SET building = ? WHERE id = ?");
             $stmt->bind_param("si", $building, $id);
 
             if ($stmt->execute()) {
@@ -123,7 +141,7 @@ class Database
 
     public function deleteBuilding($id)
     {
-        $stmt = $this->conn->prepare("CALL `deleteBuilding`(?)");
+        $stmt = $this->conn->prepare("UPDATE tbl_building SET is_deleted = 'yes' WHERE id = ?");
         $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
@@ -136,7 +154,7 @@ class Database
     public function addRoom($buildingId, $room)
     {
         $id = 0;
-        $stmt = $this->conn->prepare("CALL `roomValidation`(?, ?, ?)");
+        $stmt = $this->conn->prepare("SELECT id FROM tbl_room WHERE room = ? AND building_id = ? AND is_deleted = 'no' AND id != ?");
         $stmt->bind_param("sii", $room, $buildingId, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -145,7 +163,7 @@ class Database
             echo 'already exist';
         } else {
             $stmt->close();
-            $stmt = $this->conn->prepare("CALL `insertRoom`(?, ?)");
+            $stmt = $this->conn->prepare("INSERT INTO tbl_room (building_id, room) VALUES (?, ?)");
             $stmt->bind_param('is', $buildingId, $room);
 
             if ($stmt->execute()) {
@@ -158,7 +176,7 @@ class Database
 
     public function getRoomInfo($id)
     {
-        $stmt = $this->conn->prepare("CALL `getRoomInfo`(?)");
+        $stmt = $this->conn->prepare("SELECT id, building_id, room FROM tbl_room WHERE id = ?");
         $stmt->bind_param('i', $id);
         $stmt->execute();
         $stmt->store_result();
@@ -185,7 +203,7 @@ class Database
 
     public function editRoom($id, $buildingId, $room)
     {
-        $stmt = $this->conn->prepare("CALL `roomValidation`(?, ?, ?)");
+        $stmt = $this->conn->prepare("SELECT id FROM tbl_room WHERE room = ? AND building_id = ? AND is_deleted = 'no' AND id != ?");
         $stmt->bind_param('sii', $room, $buildingId, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -194,7 +212,7 @@ class Database
             echo 'already exist';
         } else {
             $stmt->close();
-            $stmt = $this->conn->prepare("CALL `editRoom`(?, ?, ?)");
+            $stmt = $this->conn->prepare("UPDATE tbl_room SET building_id = ?, room = ? WHERE id = ?");
             $stmt->bind_param("isi", $buildingId, $room, $id);
 
             if ($stmt->execute()) {
@@ -207,7 +225,7 @@ class Database
 
     public function deleteRoom($id)
     {
-        $stmt = $this->conn->prepare("CALL `deleteRoom`(?)");
+        $stmt = $this->conn->prepare("UPDATE tbl_room SET is_deleted = 'yes' WHERE id = ?");
         $stmt->bind_param('i', $id);
 
         if ($stmt->execute()) {
@@ -219,7 +237,7 @@ class Database
 
     public function getRoom($buildingId)
     {
-        $stmt = $this->conn->prepare("CALL `getRoom`(?)");
+        $stmt = $this->conn->prepare("SELECT id, room FROM tbl_room WHERE building_id = ? AND is_deleted = 'no'");
         $stmt->bind_param("i", $buildingId);
         $stmt->execute();
         $stmt->store_result();
@@ -240,7 +258,7 @@ class Database
     public function addSection($gradeLevelId, $buildingId, $roomId, $name)
     {
         $in_id = 0;
-        $stmt = $this->conn->prepare("CALL `sectionValidation`(?, ?, ?, ?, ?);");
+        $stmt = $this->conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND grade_level_id = ? AND room_id = ? AND section = ? AND id != ? AND is_deleted = 'no'");
         $stmt->bind_param("iiisi", $buildingId, $gradeLevelId, $roomId, $name, $in_id);
         $stmt->execute();
         $stmt->store_result();
@@ -249,7 +267,7 @@ class Database
             echo 'already exist';
         } else {
             $stmt->close();
-            $stmt = $this->conn->prepare("CALL `insertSection`(?, ?, ?, ?);");
+            $stmt = $this->conn->prepare("INSERT INTO tbl_section (building_id, grade_level_id, room_id, section) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("iiis", $buildingId, $gradeLevelId, $roomId, $name);
 
             if ($stmt->execute()) {
@@ -262,7 +280,7 @@ class Database
 
     public function getSectionInfo($id)
     {
-        $stmt = $this->conn->prepare("CALL `getSectionInfo`(?)");
+        $stmt = $this->conn->prepare("SELECT id, building_id, grade_level_id, room_id, section FROM tbl_section WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $stmt->store_result();
@@ -289,7 +307,7 @@ class Database
 
     public function editSection($id, $gradeLevelId, $buildingId, $roomId, $name)
     {
-        $stmt = $this->conn->prepare("CALL `sectionValidation`(?, ?, ?, ?, ?);");
+        $stmt = $this->conn->prepare("SELECT * FROM tbl_section WHERE building_id = ? AND grade_level_id = ? AND room_id = ? AND section = ? AND id != ? AND is_deleted = 'no'");
         $stmt->bind_param("iiisi", $buildingId, $gradeLevelId, $roomId, $name, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -298,7 +316,7 @@ class Database
             echo 'already exist';
         } else {
             $stmt->close();
-            $stmt = $this->conn->prepare("CALL `editSection`(?, ?, ?, ?, ?)");
+            $stmt = $this->conn->prepare("UPDATE tbl_section SET building_id = ?, grade_level_id = ?, room_id = ?, section = ? WHERE id = ?");
             $stmt->bind_param("iiisi", $buildingId, $gradeLevelId, $roomId, $name, $id);
 
             if ($stmt->execute()) {
@@ -311,7 +329,7 @@ class Database
 
     public function deleteSection($id)
     {
-        $stmt = $this->conn->prepare("CALL `deleteSection`(?);");
+        $stmt = $this->conn->prepare("UPDATE tbl_section SET is_deleted = 'yes' WHERE id = ?");
         $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
@@ -324,7 +342,7 @@ class Database
     public function addSubject($gradeLevel, $subject)
     {
         $id = 0;
-        $stmt = $this->conn->prepare("CALL `subjectValidation`(?, ?, ?);");
+        $stmt = $this->conn->prepare("SELECT * FROM tbl_subject WHERE grade_level_id = ? AND subject = ? AND is_deleted = 'no' AND id != ?");
         $stmt->bind_param("isi", $gradeLevel, $subject, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -333,7 +351,7 @@ class Database
             echo 'already exist';
         } else {
             $stmt->close();
-            $stmt = $this->conn->prepare("CALL `insertSubject`(?, ?);");
+            $stmt = $this->conn->prepare("INSERT INTO tbl_subject (grade_level_id, subject) VALUES (?, ?)");
             $stmt->bind_param("is", $gradeLevel, $subject);
 
             if ($stmt->execute()) {
@@ -344,7 +362,7 @@ class Database
 
     public function getSubjectInfo($id)
     {
-        $stmt = $this->conn->prepare("CALL `getSubjectInfo`(?)");
+        $stmt = $this->conn->prepare("SELECT id, grade_level_id, subject FROM tbl_subject WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $stmt->store_result();
@@ -368,7 +386,7 @@ class Database
 
     public function editSubject($id, $gradeLevel, $subject)
     {
-        $stmt = $this->conn->prepare("CALL `subjectValidation`(?, ?, ?)");
+        $stmt = $this->conn->prepare("SELECT * FROM tbl_subject WHERE grade_level_id = ? AND subject = ? AND is_deleted = 'no' AND id != ?");
         $stmt->bind_param('isi', $gradeLevel, $subject, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -377,7 +395,7 @@ class Database
             echo 'already exist';
         } else {
             $stmt->close();
-            $stmt = $this->conn->prepare("CALL `editSubject`(?, ?, ?)");
+            $stmt = $this->conn->prepare("UPDATE tbl_subject SET grade_level_id = ?, subject = in_subject WHERE id = ?");
             $stmt->bind_param('isi', $gradeLevel, $subject, $id);
 
             if ($stmt->execute()) {
@@ -390,7 +408,7 @@ class Database
 
     public function deleteSubject($id)
     {
-        $stmt = $this->conn->prepare("CALL `deleteSubject`(?)");
+        $stmt = $this->conn->prepare("UPDATE tbl_subject SET is_deleted = 'yes' WHERE id = ?");
         $stmt->bind_param('i', $id);
 
         if ($stmt->execute()) {
@@ -404,7 +422,7 @@ class Database
     {
         $encryptedPassword = md5($password);
         $id = 0;
-        $stmt = $this->conn->prepare("CALL `teacherValidation`(?, ?)");
+        $stmt = $this->conn->prepare("SELECT * FROM tbl_teacher WHERE email = ? AND is_deleted = 'no' AND id != ?");
         $stmt->bind_param("si", $email, $id);
         $stmt->execute();
         $stmt->store_result();
@@ -423,7 +441,7 @@ class Database
                 move_uploaded_file($avatarTmp, "../assets/img/avatar/" . $newImageName);
             }
 
-            $stmt = $this->conn->prepare("CALL `insertTeacher`(?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->conn->prepare("INSERT INTO tbl_teacher (f_name, l_name, gender, mobile_no, avatar, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("sssssss", $fname, $lname, $gender, $mobileNo, $newImageName, $email, $encryptedPassword);
 
             if ($stmt->execute()) {
@@ -431,6 +449,49 @@ class Database
             }
             $stmt->close();
         }
+    }
+
+    public function getSectionOption($grade_level) {
+        $stmt = $this->conn->prepare('SELECT id, section FROM tbl_section WHERE grade_level_id = ? AND is_deleted = 0');
+        $stmt->bind_param("i", $grade_level);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if($result->num_rows > 0) {
+            $fetch = $result->fetch_assoc();
+
+            while ($row = $result->fetch_assoc()) {
+                echo '<option value="'.$row['id'].'">'.strtoupper($row['section']).'</option>';
+            }
+        } else {
+            echo '<option value="" disabled>NO RESULT</option>';
+        }
+    }
+
+    public function updateStatus($data) {
+        $student_id = sanitizeData($data['student_id']);
+        $status = isset($data['status']) ? sanitizeData($data['status']) : '';
+        $section = isset($data['section']) ? sanitizeData($data['section']) : '';
+        $status_password = sanitizeData($data['status_password']) ?? null;
+        $reason = sanitizeData($data['reason']) ?? null;
+
+        if(empty($status) || $status === '') {
+            $error['status'] = 'Status is required';
+        } else if($status == 1) {
+            if(empty($section) || $section == '') {
+                $error['section'] = 'Section is required';
+            }
+
+            if(empty($status_password) || $status_password == '') {
+                $error['status_password'] = 'Student password is required';
+            }
+        }
+
+        if(count($error) > 0) {
+            $response = ['status' => 'error', 'message' => $error];
+        }
+
+        echo json_encode($response);
     }
 }
 
@@ -554,4 +615,13 @@ if (isset($_POST['add_teacher'])) {
     $password = $_POST["add_password"];
     $avatar = $_FILES["add_avatar"]["tmp_name"] ?? '';
     $database->addTeacher($fname, $lname, $gender, $mobileNo, $email, $password, $avatar);
+}
+
+if(isset($_POST['get_section'])) {
+    $grade_level = $_POST['grade_level'];
+    $database->getSectionOption($grade_level);
+}
+
+if(isset($_POST['status_update'])) {
+    $database->updateStatus($_POST);
 }

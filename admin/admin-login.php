@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/database/connection.php');
 if(isset($_SESSION['bnhses_admin_id'])) {
     echo "<script>
     location.href = 'index.php';
@@ -114,7 +115,7 @@ if(isset($_SESSION['bnhses_admin_id'])) {
 
             $.ajax({
                 type: "POST",
-                url: "./controller/function_class",
+                url: "<?= $rootSiteURLAdmin ?>controller/function_class",
                 data: form,
                 processData: false,
                 contentType: false,

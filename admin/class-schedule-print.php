@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('../database/connection.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/database/connection.php');
 if(!isset($_SESSION['bnhses_admin_id'])) {
     echo "<script>
     location.href = 'admin-login';
@@ -32,7 +32,7 @@ if(!isset($_SESSION['bnhses_admin_id'])) {
 
 <body>
     <div class="container-fluid my-5">
-        <button class="btn btn-primary mb-3" id="print_page" onclick="printPage()">PRINT SCHEDULE</button>
+        <!-- <button class="btn btn-primary mb-3" id="print_page" onclick="printPage()">PRINT SCHEDULE</button> -->
 
         <div class="row mb-4 d-flex flex-column align-items-center justify-content-center" id="header_logo">
             <img style="width: 150px;" class="mb-2" src="./assets/img/logo.png" alt="">

@@ -1,5 +1,5 @@
 <?php
-require_once('../database/connection.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/database/connection.php');
 $page_title = 'Classroom Schedule';
 ob_start();
 
@@ -321,7 +321,7 @@ $(document).ready(function() {
         "scrollX": true,
         "sScrollXInner": "100%",
         "ajax": {
-            url: "./controller/datatables.php",
+            url: "<?= $rootSiteURLAdmin ?>controller/datatables.php",
             type: "POST",
             data: function(d) {
                 return $.extend({}, d, {
@@ -386,7 +386,7 @@ $(document).ready(function() {
             $('#add_subject_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/backend.php",
+                url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
                 type: "POST",
                 data: {
                     section_id: section_id,
@@ -413,7 +413,7 @@ $(document).ready(function() {
             $('#edit_subject_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/backend.php",
+                url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
                 type: "POST",
                 data: {
                     section_id: section_id,
@@ -440,7 +440,7 @@ $(document).ready(function() {
             $('#add_teacher_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/backend.php",
+                url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
                 type: "POST",
                 data: {
                     subject_id: subject_id,
@@ -467,7 +467,7 @@ $(document).ready(function() {
             $('#edit_teacher_id').attr('disabled', false);
 
             $.ajax({
-                url: "./controller/backend.php",
+                url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
                 type: "POST",
                 data: {
                     subject_id: subject_id,
@@ -500,7 +500,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
             data: form,
             processData: false,
             contentType: false,
@@ -572,7 +572,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
             data: form,
             processData: false,
             contentType: false,
@@ -588,7 +588,7 @@ $(document).ready(function() {
                 $('#edit_teacher_id').attr('disabled', false);
 
                 $.ajax({
-                    url: "./controller/backend.php",
+                    url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
                     type: "POST",
                     data: {
                         section_id: data.section_id,
@@ -606,7 +606,7 @@ $(document).ready(function() {
 
 
                         $.ajax({
-                            url: "./controller/backend.php",
+                            url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
                             type: "POST",
                             data: {
                                 subject_id: data.subject_id,
@@ -644,7 +644,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/backend.php",
+            url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
             data: form,
             processData: false,
             contentType: false,
@@ -730,7 +730,7 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: "POST",
-                    url: "./controller/backend.php",
+                    url: "<?= $rootSiteURLAdmin ?>controller/backend.php",
                     data: form,
                     processData: false,
                     contentType: false,

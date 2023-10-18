@@ -1,5 +1,5 @@
 <?php
-require_once('../database/connection.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/database/connection.php');
 $page_title = 'Subject';
 
 ob_start();
@@ -192,7 +192,7 @@ $(document).ready(function() {
         "scrollX": true,
         "sScrollXInner": "100%",
         "ajax": {
-            url: "./controller/datatables.php",
+            url: "<?= $rootSiteURLAdmin ?>controller/datatables.php",
             type: "POST",
             data: function(d) {
                 return $.extend({}, d, {
@@ -257,7 +257,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/function_class",
+            url: "<?= $rootSiteURLAdmin ?>controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -329,7 +329,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/function_class",
+            url: "<?= $rootSiteURLAdmin ?>controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -354,7 +354,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "./controller/function_class",
+            url: "<?= $rootSiteURLAdmin ?>controller/function_class",
             data: form,
             processData: false,
             contentType: false,
@@ -440,7 +440,7 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: "POST",
-                    url: "./controller/function_class",
+                    url: "<?= $rootSiteURLAdmin ?>controller/function_class",
                     data: form,
                     processData: false,
                     contentType: false,

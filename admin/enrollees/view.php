@@ -52,14 +52,16 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">LRN</label>
-                <input type="text" name="lrn" id="lrn" class="form-control" value="<?= $student['lrn'] ?>">
+                <input type="text" name="lrn" id="lrn" class="form-control form_field" value="<?= $student['lrn'] ?>"
+                  readonly>
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Grade Level</label>
-                <input type="text" name="grade_level_id" id="grade_level_id" class="form-control"
+                <input type="text" name="grade_level_id" id="grade_level_id" class="form-control form_field"
                   value="<?= $student['grade'] ?>">
+                <span class="text-danger errors" id="grade_level_id_error"></span>
               </div>
             </div>
           </div>
@@ -67,21 +69,21 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Last Name</label>
-                <input type="text" name="lastname" id="lastname" class="form-control"
+                <input type="text" name="lastname" id="lastname" class="form-control form_field"
                   value="<?= $student['lastname'] ?>">
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">First Name</label>
-                <input type="text" name="firstname" id="firstname" class="form-control"
+                <input type="text" name="firstname" id="firstname" class="form-control form_field"
                   value="<?= $student['firstname'] ?>">
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Middle Initial</label>
-                <input type="text" name="middle_initial" id="middle_initial" class="form-control"
+                <input type="text" name="middle_initial" id="middle_initial" class="form-control form_field"
                   value="<?= $student['middle_initial'] ?>">
               </div>
             </div>
@@ -90,7 +92,7 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Gender</label>
-                <select name="gender" id="gender" class="form-select form-control">
+                <select name="gender" id="gender" class="form-select form-control form_field">
                   <option value="Male" <?= $student['gender'] === 'Male' ? 'selected' : '' ?>>Male</option>
                   <option value="Female" <?= $student['gender'] === 'Female' ? 'selected' : '' ?>>Female</option>
                 </select>
@@ -99,7 +101,7 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Date of Birth</label>
-                <input type="date" name="date_of_birth" id="date_of_birth" class="form-control"
+                <input type="date" name="date_of_birth" id="date_of_birth" class="form-control form_field"
                   value="<?= $student['date_of_birth'] ?>">
               </div>
             </div>
@@ -108,14 +110,14 @@ ob_start();
             <div class="col-md-6">
               <div class="form-group">
                 <label for="">Address</label>
-                <textarea name="address" id="address" rows="10" class="form-control"
+                <textarea name="address" id="address" rows="10" class="form-control form_field"
                   style="resize: none;"><?=  $student['address'] ?></textarea>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="">Place of Birth</label>
-                <textarea name="place_of_birth" id="place_of_birth" rows="10" class="form-control"
+                <textarea name="place_of_birth" id="place_of_birth" rows="10" class="form-control form_field"
                   style="resize: none;"><?= $student['place_of_birth'] ?></textarea>
               </div>
             </div>
@@ -124,14 +126,14 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Nationality</label>
-                <input type="text" name="nationality" id="nationality" class="form-control"
+                <input type="text" name="nationality" id="nationality" class="form-control form_field"
                   value="<?= $student['nationality'] ?>">
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Religion</label>
-                <input type="text" name="religion" id="religion" class="form-control"
+                <input type="text" name="religion" id="religion" class="form-control form_field"
                   value="<?= $student['religion'] ?>">
               </div>
             </div>
@@ -145,22 +147,23 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Student Contact</label>
-                <input type="text" name="contact" id="contact" class="form-control"
+                <input type="text" name="contact" id="contact" class="form-control form_field"
                   value="<?= $student['contact_no'] ?>">
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Student Email</label>
-                <input type="text" name="email" id="email" class="form-control" value="<?= $student['email'] ?>">
+                <input type="text" name="email" id="email" class="form-control form_field"
+                  value="<?= $student['email'] ?>">
               </div>
             </div>
             <?php if($student['status'] != 0) { ?>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Student Password</label>
-                <input type="password" name="password" id="password" class="form-control"
-                  value="<?= $student['password'] ?>">
+                <input type="password" name="password" id="password" class="form-control form_field"
+                  value="">
               </div>
             </div>
             <?php } ?>
@@ -169,14 +172,14 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Guardian's Name</label>
-                <input type="text" name="guardian_name" id="guardian_name" class="form-control"
+                <input type="text" name="guardian_name" id="guardian_name" class="form-control form_field"
                   value="<?= $student['guardian'] ?>">
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Guardian's Contact</label>
-                <input type="text" name="guardian_contact" id="guardian_contact" class="form-control"
+                <input type="text" name="guardian_contact" id="guardian_contact" class="form-control form_field"
                   value="<?= $student['parent_contact_no'] ?>">
               </div>
             </div>
@@ -268,28 +271,32 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Status</label>
-                <select name="status" id="status" class="form-control">
+                <select name="status" id="status" class="form-control status_form_field">
                   <option value="" selected disabled>SELECT STATUS</option>
                   <?php if($student['status'] === 0) { ?>
                   <option value="1">Enroll to Grade 7</option>
                   <option value="8">Decline</option>
                   <?php } ?>
                 </select>
+                <span class="text-danger errors" id="status_error"></span>
               </div>
             </div>
             <div class="col-md-4 d-none" id="section_cont">
               <div class="form-group">
                 <label for="">Section</label>
-                <select name="section" id="section" class="form-control" style="width: 100% !important;" disabled>
+                <select name="section" id="section" class="form-control status_form_field"
+                  style="width: 100% !important;" disabled>
                   <option value="" selected disabled>SELECT SECTION</option>
                 </select>
+                <span class="text-danger errors" id="section_error"></span>
               </div>
             </div>
             <div class="col-md-4 d-none" id="password_cont">
               <div class="form-group">
                 <label for="">Student Password</label>
-                <input type="password" name="status_password" id="status_password" class="form-control"
-                  value="<?= $student['password'] ?>">
+                <input type="password" name="status_password" id="status_password"
+                  class="form-control status_form_field" value="<?= $student['password'] ?>">
+                <span class="text-danger errors" id="status_password_error"></span>
               </div>
             </div>
           </div>
@@ -297,7 +304,9 @@ ob_start();
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">Reason</label>
-                <textarea name="reason" id="reason" rows="10" style="resize: none;" class="form-control"></textarea>
+                <textarea name="reason" id="reason" rows="10" style="resize: none;"
+                  class="form-control status_form_field"></textarea>
+                <span class="text-danger errors" id="reason_error"></span>
               </div>
             </div>
           </div>
@@ -318,6 +327,25 @@ $content = ob_get_clean();
 ob_start();
 ?>
 <script>
+$(window).on('load', function() {
+  if (localStorage.getItem('status') == 'success') {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: localStorage.getItem('message'),
+      iconColor: '#274c43',
+      confirmButtonColor: '#274c43',
+      showConfirmButton: false,
+      timer: 5000,
+      timerProgressBar: true,
+      color: '#000',
+      background: '#fff',
+    })
+  }
+  localStorage.removeItem('status');
+  localStorage.removeItem('message');
+})
+
 $(document).ready(function() {
   // SELECT2 INITIALIZATION
   $('#section').select2();
@@ -382,6 +410,19 @@ $(document).ready(function() {
       },
       success: function(response) {
         console.log(response);
+        let responseData = JSON.parse(response);
+
+        $('.errors').text('');
+
+        if (responseData.status === 'success') {
+          localStorage.setItem('status', 'success');
+          localStorage.setItem('message', `${responseData.message}`);
+          window.location.reload();
+        } else if (responseData.status === 'error') {
+          for (const [field, errorMessage] of Object.entries(responseData.message)) {
+            $(`#${field}_error`).text(`${errorMessage}`);
+          }
+        }
       }
     })
   })

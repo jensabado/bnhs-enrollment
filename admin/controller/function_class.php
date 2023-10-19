@@ -3,25 +3,8 @@ session_start();
 
 date_default_timezone_set('Asia/Manila');
 
-require_once '../../database/db.php';
-
-function sanitizeData($data) {
-    if (is_array($data)) {
-        // If $data is an array, sanitize each element recursively
-        foreach ($data as $key => $value) {
-            $data[$key] = sanitizeData($value);
-        }
-    } elseif (is_string($data)) {
-        // If $data is a string, apply string sanitization
-        $data = filter_var($data, FILTER_SANITIZE_STRING);
-    } elseif (is_int($data) || is_float($data)) {
-        // If $data is an integer or float, apply numeric sanitization
-        $data = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT);
-    }
-    
-    // Return the sanitized data
-    return $data;
-}
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/database/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/database/connection.php';
 
 class Database
 {
@@ -451,44 +434,122 @@ class Database
         }
     }
 
-    public function getSectionOption($grade_level) {
-        $stmt = $this->conn->prepare('SELECT id, section FROM tbl_section WHERE grade_level_id = ? AND is_deleted = 0');
+    public function getSectionOption($grade_level)
+    {
+        $stmt = $this->conn->prepare("SELECT tbl_section.id, tbl_section.section FROM tbl_section LEFT JOIN tbl_classroom_advisory ON tbl_section.id = tbl_classroom_advisory.section_id WHERE tbl_section.grade_level_id = ? AND tbl_section.is_deleted = 'no' AND tbl_classroom_advisory.is_deleted = 'no'");
         $stmt->bind_param("i", $grade_level);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if($result->num_rows > 0) {
-            $fetch = $result->fetch_assoc();
-
-            while ($row = $result->fetch_assoc()) {
-                echo '<option value="'.$row['id'].'">'.strtoupper($row['section']).'</option>';
+        if ($result->num_rows > 0) {
+            foreach ($result as $row) {
+                echo '<option value="' . $row['id'] . '">' . strtoupper($row['section']) . '</option>';
             }
         } else {
             echo '<option value="" disabled>NO RESULT</option>';
         }
     }
 
-    public function updateStatus($data) {
+    public function updateStatus($data)
+    {
         $student_id = sanitizeData($data['student_id']);
         $status = isset($data['status']) ? sanitizeData($data['status']) : '';
         $section = isset($data['section']) ? sanitizeData($data['section']) : '';
         $status_password = sanitizeData($data['status_password']) ?? null;
         $reason = sanitizeData($data['reason']) ?? null;
 
-        if(empty($status) || $status === '') {
+        if (empty($status) || $status === '') {
             $error['status'] = 'Status is required';
-        } else if($status == 1) {
-            if(empty($section) || $section == '') {
+        } else if ($status == 1) {
+            if (empty($section) || $section == '') {
                 $error['section'] = 'Section is required';
             }
 
-            if(empty($status_password) || $status_password == '') {
+            if (empty($status_password) || $status_password == '') {
                 $error['status_password'] = 'Student password is required';
+            }
+        } else if ($status == 8) {
+            if (empty($reason) || $reason == '') {
+                $error['reason'] = 'Reason is required';
             }
         }
 
-        if(count($error) > 0) {
+        if (!empty($error)) {
             $response = ['status' => 'error', 'message' => $error];
+        } else {
+            if ($status == '1') {
+                $hashed_password = password_hash($status_password, PASSWORD_BCRYPT);
+                $year = date('y');
+                $last_number = 000000 + (int) $student_id;
+                $result = str_pad($last_number, 6, '0', STR_PAD_LEFT);
+                $lrn = $year . '' . $result;
+                $stmt = $this->conn->prepare("UPDATE tbl_student SET status = ?, password = ?, lrn = ? WHERE id = ?");
+                $stmt->bind_param("issi", $status, $hashed_password, $lrn, $student_id);
+
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    $stmt = $this->conn->prepare("SELECT * FROM tbl_student WHERE id = ?");
+                    $stmt->bind_param("i", $student_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $studentData = $result->fetch_assoc();
+                    $studentData['password_plain'] = $status_password;
+                    $stmt->close();
+
+                    $stmt = $this->conn->prepare("INSERT INTO tbl_student_section (student_id, grade_level_id, section_id) VALUES (?, ?, ?)");
+                    $stmt->bind_param("iii", $studentData['id'], $studentData['grade_level_id'], $section);
+
+                    if ($stmt->execute()) {
+                        $stmt->close();
+                        $stmt = $this->conn->prepare("SELECT f_name, l_name FROM tbl_classroom_advisory LEFT JOIN tbl_teacher ON tbl_classroom_advisory.teacher_id = tbl_teacher.id WHERE tbl_classroom_advisory.section_id = ? AND tbl_classroom_advisory.is_deleted = 'no' GROUP BY teacher_id");
+                        $stmt->bind_param("i", $section);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $adviserData = $result->fetch_assoc();
+                        $stmt->close();
+
+                        $stmt = $this->conn->prepare("SELECT section FROM tbl_section WHERE id = ?");
+                        $stmt->bind_param("i", $section);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $sectionData = $result->fetch_assoc();
+                        $stmt->close();
+
+                        $mailData = array(
+                            'studentData' => $studentData,
+                            'adviserData' => $adviserData,
+                            'sectionData' => $sectionData,
+                        );
+
+                        ob_start();
+                        include $_SERVER['DOCUMENT_ROOT'] . '/bnhs-enrollment/email-templates/enrolled-template.php';
+                        $mail_body = ob_get_clean();
+
+                        $mailConfig = array(
+                            'mail_recipient_email' => $studentData['email'],
+                            'mail_recipient_name' => $studentData['firstname'] . ' ' . $studentData['lastname'],
+                            'mail_subject' => 'Welcome to Bacoor National High School',
+                            'mail_body' => $mail_body,
+                        );
+
+                        if (sendEmail($mailConfig)) {
+                            $response = ['status' => 'success', 'message' => 'Status updated successfully'];
+                        } else {
+                            $stmt = $this->conn->prepare("UPDATE tbl_student SET password = ? AND status = ? WHERE id = ?");
+                            $resetPass = '';
+                            $resetStatus = 0;
+                            $stmt->bind_param("sii", $resetPass, $resetStatus, $student_id);
+                            $stmt->execute();
+                            $stmt->close();
+                            $stmt = $this->conn->prepare("DELETE FROM tbl_student_section WHERE student_id = ? AND grade_level_id = ?");
+                            $gradeLevel = 1;
+                            $stmt->bind_param("ii", $student_id, $gradeLevel);
+                            $stmt->execute();
+                            $response = ['status' => 'error_alert', 'message' => 'Something went wrong'];
+                        }
+                    }
+                }
+            }
         }
 
         echo json_encode($response);
@@ -617,11 +678,11 @@ if (isset($_POST['add_teacher'])) {
     $database->addTeacher($fname, $lname, $gender, $mobileNo, $email, $password, $avatar);
 }
 
-if(isset($_POST['get_section'])) {
+if (isset($_POST['get_section'])) {
     $grade_level = $_POST['grade_level'];
     $database->getSectionOption($grade_level);
 }
 
-if(isset($_POST['status_update'])) {
+if (isset($_POST['status_update'])) {
     $database->updateStatus($_POST);
 }
